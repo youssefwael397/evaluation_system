@@ -45,4 +45,27 @@ router.get('/user', async (req, res) => {
     })
 })
 
+router.post('/insert', upload.none(), async (req, res) => {
+
+    const user_task = {
+        task_name: req.body.task_name,
+        user_name: req.body.user_name,
+        value: req.body.value
+    }
+
+    try {
+        const new_user_task = await TaskController.InsertValue(user_task)
+        res.send({
+            status: 'ok',
+            new_user_task
+        })
+    } catch (error) {
+        res.status(403).send({
+            'status': 'error',
+            'error': error
+        })
+    }
+
+})
+
 module.exports = router
