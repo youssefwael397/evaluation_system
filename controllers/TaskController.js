@@ -24,10 +24,17 @@ const getTasksByUserName = async (name) => {
     }
 }
 
+const InsertValue = async (user_task) => {
+    // console.log(user_task)
+    const new_user_task = await TaskRepo.InsertValue(user_task)
+    return new_user_task
+}
+
 const TaskController = {
     createNewTask,
     getTasksByCommitteeName,
-    getTasksByUserName
+    getTasksByUserName,
+    InsertValue
 }
 
 module.exports = {TaskController}

@@ -58,16 +58,7 @@ router.get('/disactive/committee', async (req, res) => {
     })
 })
 
-// accept request of member by id
-router.put('/activate', async (req, res) => {
 
-    const updated_user = await UserController.ActivateUser(req.query['id']);
-    res.send({
-        status: 'ok',
-        updated_user
-    })
-
-})
 
 
 // router.get('/admin/create', async (req, res) => {
@@ -138,4 +129,15 @@ router.put('/update/image', upload.single('image'), async (req, res) => {
 
 })
 
+
+// accept request of member by id
+router.put('/activate', async (req, res) => {
+
+    const updated_user = await UserController.ActivateUser(req.query['id']);
+    res.send({
+        status: 'ok',
+        updated_user
+    })
+
+})
 module.exports = router
