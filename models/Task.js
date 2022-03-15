@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Task.belongsToMany(models.User, { through: 'User_Task', foreignKey: 'task_id', otherKey: 'user_id' })
-      Task.belongsTo(models.Committee)
+      Task.belongsToMany(models.Committee, { through: 'User_Task' });
     }
   }
   Task.init({
@@ -31,17 +31,17 @@ module.exports = (sequelize, DataTypes) => {
       require: true,
     },
     type: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.CHAR(1),
       require: true,
     },
-    // committee_id: {
-    //   type: DataTypes.INTEGER,
-    //   require: true,
-    //   references: {
-    //     model: 'committees',
-    //     key: 'committee_id'
-    //   }
-    // },
+    committee_id: {
+      type: DataTypes.INTEGER,
+      require: true,
+      // references: {
+      //   model: 'committees',
+      //   key: 'committee_id'
+      // }
+    },
 
   },
     {

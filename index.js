@@ -10,11 +10,11 @@ const login = require('./routes/login')
 const tasks = require('./routes/tasks')
 
 // to update schema of models
-// try {
-//     sequelize.sync({ alter: true })
-// } catch (error) {
-//     console.log('e')
-// }
+try {
+    sequelize.sync({ alter: true })
+} catch (error) {
+    console.log('e')
+}
 
 
 // miidlewares

@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Committee.hasMany(models.User, { foreignKey: 'first_com_id', sourceKey: 'committee_id' })
       Committee.hasMany(models.User, { foreignKey: 'second_com_id', sourceKey: 'committee_id' })
+      Committee.hasMany(models.Task, { foreignKey: 'committee_id', sourceKey: 'committee_id' })
 
     }
   }
