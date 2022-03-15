@@ -1,4 +1,4 @@
-const { User, Task, Committee, sequelize, Sequelize } = require('../models/index')
+const { User, Task, Committee, sequelize, Sequelize, User_Task } = require('../models/index')
 
 
 const createNewTask = async (task) => {
@@ -9,11 +9,26 @@ const createNewTask = async (task) => {
         committee_id: task.committee_id
     })
     return new_task
-    console.log(new_task)
+}
+
+const getTasksByCommitteeName = async (name) => {
+    const committee = await Committee.findOne({ where: { committee_name: name } })
+    const committee_id = committee.committee_id;
+    const tasks = await Task.findAll({ where: { committee_id: committee_id } });
+    return tasks
+}
+
+const getTasksByUserName = async (name) => {
+    const user = await user.findOne({ where: { user_name: name } })
+    const user_id = user.user_id;
+    const tasks = await User_Task.findAll({ where: { user_id: user_id } });
+    return tasks
 }
 
 const TaskRepo = {
-    createNewTask
+    createNewTask,
+    getTasksByCommitteeName,
+    getTasksByUserName
 }
 
 module.exports = {TaskRepo}
