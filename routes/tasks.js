@@ -13,7 +13,7 @@ router.post('/create', upload.none(), async (req, res) => {
         type: req.body.type,
         committee_id: req.body.committee_id
     }
-    //console.log(task)
+
     try {
         const new_task = TaskController.createNewTask(task)
         res.send({
@@ -27,6 +27,22 @@ router.post('/create', upload.none(), async (req, res) => {
         })
     }
 
+})
+
+router.get('/committee', async (req, res) => {
+    const tasks = await TaskController.getTasksByCommitteeName(req.query['name']);
+    res.send({
+        status: 'ok',
+        tasks
+    })
+})
+
+router.get('/user', async (req, res) => {
+    const tasks = await TaskController.getTasksByUserName(req.query['name']);
+    res.send({
+        status: 'ok',
+        tasks
+    })
 })
 
 module.exports = router
