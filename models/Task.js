@@ -12,7 +12,6 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Task.belongsToMany(models.User, { through: 'User_Task', foreignKey: 'task_id', otherKey: 'user_id' })
-      Task.belongsToMany(models.Committee, { through: 'User_Task' });
     }
   }
   Task.init({
