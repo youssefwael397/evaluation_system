@@ -11,6 +11,11 @@ const getAllUsers = async () => {
     }
 }
 
+const getUserById = async (id) => {
+    const user = await UserRepo.getUserById(id);
+    return user;
+}
+
 const getActiveUsers = async (name) => {
     try {
         const active_users = await UserRepo.getActiveUsers(name)
@@ -63,7 +68,6 @@ const createNewUser = async (user) => {
     console.log(USER)
 }
 
-
 const createNewAdmin = async (admin) => {
     const password_hashed = await bcrypt.hash(admin.password, 10);
     const NEW_USER = {
@@ -97,6 +101,12 @@ const ActivateUser = async (id) => {
     return updated_user
 }
 
+const UpdateImage = async (user_id, image) => {
+    const updated_user = await UserRepo.UpdateImage(user_id, image);
+    return updated_user
+}
+
+
 const UserController = {
     getAllUsers,
     getActiveUsers,
@@ -104,7 +114,9 @@ const UserController = {
     getUsersByCommitteeName,
     createNewUser,
     createNewAdmin,
-    ActivateUser
+    ActivateUser,
+    UpdateImage,
+    getUserById
 }
 
 module.exports = { UserController }

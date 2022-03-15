@@ -13,6 +13,7 @@ const storage = multer.diskStorage({
 })
 const upload = multer({ storage: storage })
 
+// get all users of spe
 router.get('/all', async (req, res) => {
     const users = await UserController.getAllUsers();
     res.send({
@@ -21,6 +22,25 @@ router.get('/all', async (req, res) => {
     })
 })
 
+// get user by id
+router.get('/', async (req, res) => {
+    const user = await UserController.getUserById(req.query['id']);
+    res.send({
+        status: 'ok',
+        user
+    })
+})
+
+// get all members of special committee
+router.get('/committee', async (req, res) => {
+    const users = await UserController.getUsersByCommitteeName(req.query['name']);
+    res.send({
+        status: 'ok',
+        users
+    })
+})
+
+// get active members of special committee
 router.get('/active/committee/', async (req, res) => {
     const active_users = await UserController.getActiveUsers(req.query['name']);
     res.send({
@@ -29,6 +49,7 @@ router.get('/active/committee/', async (req, res) => {
     })
 })
 
+// get disactive members of special committee
 router.get('/disactive/committee', async (req, res) => {
     const disactive_users = await UserController.getDisActiveUsers(req.query['name']);
     res.send({
@@ -37,22 +58,15 @@ router.get('/disactive/committee', async (req, res) => {
     })
 })
 
-router.get('/committee', async (req, res) => {
-    // console.log(req.query['name'])
-    const users = await UserController.getUsersByCommitteeName(req.query['name']);
-    res.send({
-        status: 'ok',
-        users
-    })
-})
-
-router.get('/update', async (req, res) => {
+// accept request of member by id
+router.put('/activate', async (req, res) => {
 
     const updated_user = await UserController.ActivateUser(req.query['id']);
     res.send({
         status: 'ok',
         updated_user
     })
+
 })
 
 
@@ -78,6 +92,7 @@ router.get('/update', async (req, res) => {
 
 // })
 
+// create new member
 router.post('/create', upload.single('image'), async (req, res) => { // upload.none()
 
     const image = req.file;
@@ -109,6 +124,18 @@ router.post('/create', upload.single('image'), async (req, res) => { // upload.n
 
 })
 
+// update image by user id and image
+router.put('/update/image', upload.single('image'), async (req, res) => {
+    const user_id = req.body.id;
+    const image = req.file;
 
+    const updated_user = await UserController.UpdateImage(user_id, image.filename);
+
+    res.send({
+        status: 'ok',
+        updated_user
+    })
+
+})
 
 module.exports = router

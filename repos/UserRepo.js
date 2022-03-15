@@ -1,11 +1,24 @@
-// const { or } = require('sequelize/types')
 const { Op } = require("sequelize");
 const { User, Committee, sequelize, Sequelize } = require('../models/index')
+const fs = require('fs');
 
 
 const getAllUsers = async () => {
     const users = await User.findAll()
+    users.forEach((user) => {
+        const image = fs.readFileSync(`images${user.image}`, { encoding: 'base64' })
+        user.image = image
+    })
     return users
+}
+
+const getUserById = async (id) => {
+    const user = await User.findOne({ where: { user_id: id } })
+    user.forEach((user) => {
+        const image = fs.readFileSync(`images${user.image}`, { encoding: 'base64' })
+        user.image = image
+    })
+    return user
 }
 
 const getActiveUsers = async (name) => {
@@ -14,7 +27,11 @@ const getActiveUsers = async (name) => {
 
     const first_active_users = await User.findAll({ where: { first_com_id: committee_id, first_com_active: true, is_admin: false } })
     const second_active_users = await User.findAll({ where: { second_com_id: committee_id, second_com_active: true, is_admin: false } })
-    const active_users = [...first_active_users, ...second_active_users]
+    const active_users = [...first_active_users, ...second_active_users];
+    active_users.forEach((user) => {
+        const image = fs.readFileSync(`images${user.image}`, { encoding: 'base64' })
+        user.image = image
+    })
     return active_users
 }
 
@@ -25,13 +42,21 @@ const getDisActiveUsers = async (name) => {
     const first_disactive_users = await User.findAll({ where: { first_com_id: committee_id, first_com_active: false, is_admin: false } })
     const second_disactive_users = await User.findAll({ where: { second_com_id: committee_id, second_com_active: false, is_admin: false } })
     const disactive_users = [...first_disactive_users, ...second_disactive_users]
+    disactive_users.forEach((user) => {
+        const image = fs.readFileSync(`images${user.image}`, { encoding: 'base64' })
+        user.image = image
+    })
     return disactive_users
 }
 
 const getUsersByCommitteeName = async (name) => {
     const committee = await Committee.findOne({ where: { committee_name: name } })
     const committee_id = committee.committee_id;
-    const users = await User.findAll({ where: { first_com_id: committee_id } })
+    const users = await User.findAll({ where: { first_com_id: committee_id } });
+    users.forEach((user) => {
+        const image = fs.readFileSync(`images${user.image}`, { encoding: 'base64' })
+        user.image = image
+    })
     return users
 }
 
@@ -88,15 +113,49 @@ const ActivateUser = async (id) => {
             { first_com_active: true },
             { where: { user_id: id } }
         )
-        return updated_user
     } else {
         const updated_user = await User.update(
             { second_com_active: true },
             { where: { user_id: id } }
         )
-        return updated_user
     }
-    return user
+
+    const updated_user = await User.findOne(
+        { where: { user_id: id } }
+    );
+
+    updated_user.forEach((user) => {
+        const image = fs.readFileSync(`images${user.image}`, { encoding: 'base64' })
+        user.image = image
+    })
+
+    return updated_user
+    // return user
+}
+
+const UpdateImage = async (user_id, image) => {
+
+    const user = await User.findOne(
+        { where: { user_id: user_id } }
+    );
+
+    fs.unlinkSync(`images/${user.image}`)
+
+    await User.update(
+        { image: image },
+        { where: { user_id: user_id } }
+    )
+
+    const updated_user = await User.findOne(
+        { where: { user_id: user_id } }
+    );
+
+    updated_user.forEach((user) => {
+        const image = fs.readFileSync(`images${user.image}`, { encoding: 'base64' })
+        user.image = image
+    })
+
+    return updated_user
 }
 
 const UserRepo = {
@@ -106,7 +165,9 @@ const UserRepo = {
     getUsersByCommitteeName,
     createNewUser,
     createNewAdmin,
-    ActivateUser
+    ActivateUser,
+    UpdateImage,
+    getUserById
 }
 
 
