@@ -20,40 +20,103 @@ const getAllUsers = async () => {
     return users
 }
 
+
+
 const getUserById = async (id) => {
-    const user = await User.findOne({ where: { user_id: id } })
-    const image = fs.readFileSync(`images${user.image}`, { encoding: 'base64' })
-    user.image = image
-    return user
+    const promises = [];
+    const users=await User.findOne({
+        where: {user_id: id } 
+        },
+    )
+    users.forEach((user) => {
+        promises.push(new Promise(async(resolve, reject)=>{
+        const image = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' })
+        user.image = image
+        resolve();
+    }))
+    })
+    await Promise.all(promises);
+    return users
 }
+
+
 
 const getActiveUsers = async (name) => {
-    const committee = await Committee.findOne({ where: { committee_name: name } })
+    const promises = [];
+    const committee = await Committee.findOne({
+        where: { committee_name: name } })
     const committee_id = committee.committee_id;
 
-    const first_active_users = await User.findAll({ where: { first_com_id: committee_id, first_com_active: true, is_admin: false } })
-    const second_active_users = await User.findAll({ where: { second_com_id: committee_id, second_com_active: true, is_admin: false } })
-    const active_users = [...first_active_users, ...second_active_users];
-    active_users.forEach((user) => {
-        const image = fs.readFileSync(`images${user.image}`, { encoding: 'base64' })
-        user.image = image
+    const active_users = await User.findAll({ 
+        where: {
+        
+            [op.or]:[
+                {"$first_com.committee_id$":id ,first_com_active: true, is_admin: false},
+                {"$second_com.committee_id$":id ,second_com_active: true, is_admin: false},
+            ]
+    },
+        include:[{
+            model:Committee,
+            as:'first_com'
+        },
+        {
+            model:Committee,
+            as:'second_com'
+        }
+    ]
     })
-    return active_users
-}
+
+        active_users.forEach((user,index) => {
+            promises.push( new Promise(async(resolve, reject)=>{ 
+                const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' });
+                user.image=img
+                resolve();
+        })
+            )
+        })
+        await Promise.all(promises);
+        return active_users
+    }
 
 const getDisActiveUsers = async (name) => {
-    const committee = await Committee.findOne({ where: { committee_name: name } })
+    const promises = [];
+
+    const committee = await Committee.findOne({
+        where: { committee_name: name } })
     const committee_id = committee.committee_id;
 
-    const first_disactive_users = await User.findAll({ where: { first_com_id: committee_id, first_com_active: false, is_admin: false } })
-    const second_disactive_users = await User.findAll({ where: { second_com_id: committee_id, second_com_active: false, is_admin: false } })
-    const disactive_users = [...first_disactive_users, ...second_disactive_users]
-    disactive_users.forEach((user) => {
-        const image = fs.readFileSync(`images${user.image}`, { encoding: 'base64' })
-        user.image = image
+    const disactive_users = await User.findAll({ 
+        where: {
+        
+            [op.or]:[
+                {"$first_com.committee_id$":id ,first_com_active: false, is_admin: false},
+                {"$second_com.committee_id$":id ,second_com_active: false, is_admin: false},
+            ]
+            
+    },
+        include:[{
+            model:Committee,
+            as:'first_com'
+        },
+        {
+            model:Committee,
+            as:'second_com'
+        }
+    ]
     })
-    return disactive_users
-}
+
+        disactive_users.forEach((user,index) => {
+            promises.push( new Promise(async(resolve, reject)=>{ 
+                const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' });
+                user.image=img
+                resolve();
+        })
+            )
+        })
+        await Promise.all(promises);
+        return disactive_users
+    }
+
 
 const getUsersByCommitteeName = async (name) => {
     const promises = [];
@@ -76,7 +139,6 @@ const getUsersByCommitteeName = async (name) => {
     ]
     })
     //console.log(usersTest)
-
     users.forEach((user) => {
         promises.push(new Promise(async(resolve, reject)=>{
         const image = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' })
@@ -88,6 +150,10 @@ const getUsersByCommitteeName = async (name) => {
     return users
 }
 
+
+
+
+/////////////////////////////////////////////////////////////////////////
 const createNewUser = async (user) => {
     const committee = await Committee.findOne({ where: { committee_name: user.committee_name } })
     const first_com_id = committee.committee_id;
@@ -148,10 +214,13 @@ const ActivateUser = async (id) => {
     );
 
     updated_user.forEach((user) => {
-        const image = fs.readFileSync(`images${user.image}`, { encoding: 'base64' })
+        promises.push(new Promise(async(resolve, reject)=>{
+        const image = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' })
         user.image = image
+        resolve();
+    }))
     })
-
+    await Promise.all(promises);
     return updated_user
     // return user
 }
@@ -174,10 +243,13 @@ const UpdateImage = async (user_id, image) => {
     );
 
     updated_user.forEach((user) => {
-        const image = fs.readFileSync(`images${user.image}`, { encoding: 'base64' })
+        promises.push(new Promise(async(resolve, reject)=>{
+        const image = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' })
         user.image = image
+        resolve();
+    }))
     })
-
+    await Promise.all(promises);
     return updated_user
 }
 
@@ -224,3 +296,4 @@ const UserRepo = {
 
 
 module.exports = { UserRepo }
+
