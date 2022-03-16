@@ -24,7 +24,7 @@ router.get('/', async (req, res) => {
 
 // get user by id
 router.get('/:id', async (req, res) => {
-    const user = await UserController.getUserById(req.params['id']);
+    const user = await UserController.getUserById(req.params.id);
     res.send({
         status: 'ok',
         user
@@ -42,7 +42,7 @@ router.get('/committee/:name', async (req, res) => {
 
 // get active members of special committee
 router.get('/', async (req, res) => {
-    const active_users = await UserController.getActiveUsers(req.query['name']);
+    const active_users = await UserController.getActiveUsers(req.params.name);
     res.send({
         status: 'ok',
         active_users
@@ -51,7 +51,7 @@ router.get('/', async (req, res) => {
 
 // get disactive members of special committee
 router.get('/disactive/committee', async (req, res) => {
-    const disactive_users = await UserController.getDisActiveUsers(req.query['name']);
+    const disactive_users = await UserController.getDisActiveUsers(req.query.name);
     res.send({
         status: 'ok',
         disactive_users
@@ -97,7 +97,7 @@ router.put('/update/image', upload.single('image'), async (req, res) => {
 // accept request of member by id
 router.put('/activate', async (req, res) => {
 
-    const updated_user = await UserController.ActivateUser(req.query['id']);
+    const updated_user = await UserController.ActivateUser(req.params['id']);
     res.send({
         status: 'ok',
         updated_user
