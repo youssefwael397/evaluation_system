@@ -5,11 +5,17 @@ const haram_encrypt = require('../env')
 const jwt = require('jsonwebtoken')
 
 const getAllUsers = async () => {
-    const users = await User.findAll({ where: { is_admin: false } })
-    users.forEach((user) => {
-        const image = fs.readFileSync(`images${user.image}`, { encoding: 'base64' })
-        user.image = image
+    const users = await User.findAll()
+    const promises=[];
+    users.forEach((user,index) => {
+        promises.push( new Promise(async(resolve, reject)=>{ 
+            const img = await fs.readFile(`images${user.image}`, { encoding: 'base64' });
+            user.image=img
+            resolve();
     })
+        )
+    })
+    await Promise.all(promises);
     return users
 }
 
