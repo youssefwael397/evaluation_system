@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 // get all users of spe
-router.get('/all', async (req, res) => {
+router.get('/', async (req, res) => {
     const users = await UserController.getAllUsers();
     res.send({
         status: 'ok',
@@ -23,8 +23,8 @@ router.get('/all', async (req, res) => {
 })
 
 // get user by id
-router.get('/', async (req, res) => {
-    const user = await UserController.getUserById(req.query['id']);
+router.get('/:id', async (req, res) => {
+    const user = await UserController.getUserById(req.params['id']);
     res.send({
         status: 'ok',
         user
@@ -32,8 +32,8 @@ router.get('/', async (req, res) => {
 })
 
 // get all members of special committee
-router.get('/committee', async (req, res) => {
-    const users = await UserController.getUsersByCommitteeName(req.query['name']);
+router.get('/committee/:name', async (req, res) => {
+    const users = await UserController.getUsersByCommitteeName(req.params.name);
     res.send({
         status: 'ok',
         users
@@ -41,7 +41,7 @@ router.get('/committee', async (req, res) => {
 })
 
 // get active members of special committee
-router.get('/active/committee/', async (req, res) => {
+router.get('/', async (req, res) => {
     const active_users = await UserController.getActiveUsers(req.query['name']);
     res.send({
         status: 'ok',
@@ -58,50 +58,14 @@ router.get('/disactive/committee', async (req, res) => {
     })
 })
 
-
-
-
-// router.get('/admin/create', async (req, res) => {
-//     // console.log(req.query['name'])
-
-//     try {
-//         let users = []
-//         admins.map(async admin => {
-//             const new_admin = await UserController.createNewAdmin(admin);
-//             users.push(new_admin);
-//         })
-//         res.send({
-//             status: 'ok',
-//             users
-//         })
-//     } catch (error) {
-//         res.send({
-//             status: 'error',
-//             error
-//         })
-//     }
-
-// })
-
 // create new member
 router.post('/create', upload.single('image'), async (req, res) => { // upload.none()
 
     const image = req.file;
-    const user = {
-        user_name: req.body.user_name,
-        email: req.body.email,
-        password: req.body.password,
-        facebook: req.body.facebook,
-        gender: req.body.gender,
-        phone: req.body.phone,
-        image: image.filename,
-        faculty: req.body.faculty,
-        university: req.body.university,
-        committee_name: req.body.committee_name,
-    }
+    const user = { ...req.body, image: image.filename }
 
     try {
-        UserController.createNewUser(user)
+        await UserController.createNewUser(user)
         res.send({
             status: 'ok',
             user

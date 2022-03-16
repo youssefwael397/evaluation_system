@@ -1,6 +1,6 @@
 const { UserRepo } = require('../repos/UserRepo')
 const bcrypt = require('bcryptjs')
-const haram_encrypt = require('../env')
+const haram_encrypt = require('../env');
 
 const getAllUsers = async () => {
     try {
@@ -45,18 +45,7 @@ const getUsersByCommitteeName = async (name) => {
 
 const createNewUser = async (user) => {
     const password_hashed = await bcrypt.hash(user.password, 10);
-    const NEW_USER = {
-        user_name: user.user_name,
-        email: user.email,
-        password: password_hashed,
-        facebook: user.facebook,
-        gender: user.gender,
-        phone: user.phone,
-        image: user.image,
-        faculty: user.faculty,
-        university: user.university,
-        committee_name: user.committee_name
-    }
+    const NEW_USER = { ...user, password: password_hashed }
 
     try {
         const new_user = await UserRepo.createNewUser(NEW_USER);
@@ -106,6 +95,12 @@ const UpdateImage = async (user_id, image) => {
     return updated_user
 }
 
+const login = async (login_user) => {
+    const login_token = await UserRepo.login(login_user);
+    return login_token
+}
+
+
 
 const UserController = {
     getAllUsers,
@@ -116,7 +111,8 @@ const UserController = {
     createNewAdmin,
     ActivateUser,
     UpdateImage,
-    getUserById
+    getUserById,
+    login
 }
 
 module.exports = { UserController }

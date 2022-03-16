@@ -1,10 +1,11 @@
-const { Op } = require("sequelize");
-const { User, Committee, sequelize, Sequelize } = require('../models/index')
+const { User, Committee } = require('../models/index')
 const fs = require('fs');
-
+const bcrypt = require('bcryptjs')
+const haram_encrypt = require('../env')
+const jwt = require('jsonwebtoken')
 
 const getAllUsers = async () => {
-    const users = await User.findAll()
+    const users = await User.findAll({ where: { is_admin: false } })
     users.forEach((user) => {
         const image = fs.readFileSync(`images${user.image}`, { encoding: 'base64' })
         user.image = image
@@ -14,10 +15,8 @@ const getAllUsers = async () => {
 
 const getUserById = async (id) => {
     const user = await User.findOne({ where: { user_id: id } })
-    user.forEach((user) => {
-        const image = fs.readFileSync(`images${user.image}`, { encoding: 'base64' })
-        user.image = image
-    })
+    const image = fs.readFileSync(`images${user.image}`, { encoding: 'base64' })
+    user.image = image
     return user
 }
 
@@ -63,18 +62,13 @@ const getUsersByCommitteeName = async (name) => {
 const createNewUser = async (user) => {
     const committee = await Committee.findOne({ where: { committee_name: user.committee_name } })
     const first_com_id = committee.committee_id;
-    const new_user = await User.create({
-        user_name: user.user_name,
-        email: user.email,
-        password: user.password,
-        facebook: user.facebook,
-        gender: user.gender,
-        phone: user.phone,
-        image: user.image,
-        faculty: user.faculty,
-        university: user.university,
+    await User.create({
+        ...user,
         first_com_id: first_com_id
     })
+
+    const new_user = await User.findOne({ where: { user_name: user.user_name } })
+
     return new_user
 }
 
@@ -158,6 +152,34 @@ const UpdateImage = async (user_id, image) => {
     return updated_user
 }
 
+const login = async (login_user) => {
+
+    const user = await User.findOne({ where: { email: login_user.email } })
+
+    if (await bcrypt.compare(login_user.password, user.password)) {
+
+        if (user.first_com_active) {
+
+            const login_token = jwt.sign({
+                user_id: user.user_id,
+                user_name: user.user_name,
+                email: user.email,
+                first_com_id: user.first_com_id,
+                second_com_id: user.second_com_id,
+                is_admin: user.is_admin,
+                exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24) // one day expiration
+            }, haram_encrypt)
+
+            return login_token
+
+        }
+    } else {
+
+        console.log('password is false')
+    }
+}
+
+
 const UserRepo = {
     getAllUsers,
     getActiveUsers,
@@ -167,7 +189,8 @@ const UserRepo = {
     createNewAdmin,
     ActivateUser,
     UpdateImage,
-    getUserById
+    getUserById,
+    login
 }
 
 
