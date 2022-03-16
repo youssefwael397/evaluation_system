@@ -1,10 +1,10 @@
-const { User, Committee } = require('../models/index')
+const { User, Committee, Sequelize } = require('../models/index')
 const fsAsync = require('fs').promises;
 const fs = require('fs');
 const bcrypt = require('bcryptjs')
 const haram_encrypt = require('../env')
-const jwt = require('jsonwebtoken')
-
+const jwt = require('jsonwebtoken');
+const op = Sequelize.Op;
 const getAllUsers = async () => {
     const users = await User.findAll()
     const promises=[];
@@ -56,13 +56,35 @@ const getDisActiveUsers = async (name) => {
 }
 
 const getUsersByCommitteeName = async (name) => {
-    const committee = await Committee.findOne({ where: { committee_name: name } })
-    const committee_id = committee.committee_id;
-    const users = await User.findAll({ where: { first_com_id: committee_id } });
-    users.forEach((user) => {
-        const image = fs.readFileSync(`images${user.image}`, { encoding: 'base64' })
-        user.image = image
+    const promises = [];
+    const users=await User.findAll({
+        where:{
+            [op.or]:[
+                {"$first_com.committee_name$":name},
+                {"$second_com.committee_name$":name}
+
+            ]
+        },
+        include:[{
+            model:Committee,
+            as:'first_com'
+        },
+        {
+            model:Committee,
+            as:'second_com'
+        }
+    ]
     })
+    //console.log(usersTest)
+
+    users.forEach((user) => {
+        promises.push(new Promise(async(resolve, reject)=>{
+        const image = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' })
+        user.image = image
+        resolve();
+    }))
+    })
+    await Promise.all(promises);
     return users
 }
 
