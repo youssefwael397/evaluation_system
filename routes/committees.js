@@ -15,8 +15,8 @@ router.get('/all', async (req, res) => {
 
 // get committee by id
 router.get('/', async (req, res) => {
-    console.log(req.query['id'])
-    const committee = await CommitteeController.getCommitteeById(req.query['id']);
+    console.log(req.params.id)
+    const committee = await CommitteeController.getCommitteeById(req.params.id);
     res.send({
         status: 'ok',
         committee
