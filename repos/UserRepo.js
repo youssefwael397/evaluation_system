@@ -1,4 +1,5 @@
 const { User, Committee } = require('../models/index')
+const fsAsync = require('fs').promises;
 const fs = require('fs');
 const bcrypt = require('bcryptjs')
 const haram_encrypt = require('../env')
@@ -9,7 +10,7 @@ const getAllUsers = async () => {
     const promises=[];
     users.forEach((user,index) => {
         promises.push( new Promise(async(resolve, reject)=>{ 
-            const img = await fs.readFile(`images${user.image}`, { encoding: 'base64' });
+            const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' });
             user.image=img
             resolve();
     })
