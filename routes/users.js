@@ -95,7 +95,7 @@ router.put('/update/image', upload.single('image'), async (req, res) => {
 
 
 // accept request of member by id
-router.put('/activate', async (req, res) => {
+router.put('/:id/activate', async (req, res) => {
 
     const updated_user = await UserController.ActivateUser(req.params['id']);
     res.send({
