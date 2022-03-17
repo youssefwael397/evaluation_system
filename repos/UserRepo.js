@@ -43,9 +43,7 @@ const getUserById = async (id) => {
 
 const getActiveUsers = async (name) => {
     const promises = [];
-    const committee = await Committee.findOne({
-        where: { committee_name: name } })
-    const committee_id = committee.committee_id;
+   
 
     const active_users = await User.findAll({ 
         where: {
@@ -80,11 +78,6 @@ const getActiveUsers = async (name) => {
 
 const getDisActiveUsers = async (name) => {
     const promises = [];
-
-    const committee = await Committee.findOne({
-        where: { committee_name: name } })
-    const committee_id = committee.committee_id;
-
     const disactive_users = await User.findAll({ 
         where: {
         
