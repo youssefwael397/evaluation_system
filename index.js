@@ -18,6 +18,7 @@ const tasks = require('./routes/tasks')
 
 
 // miidlewares
+app.use(express.json()); // built-in middleware for express
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/xwww-form-urlencoded
 app.use(cors());

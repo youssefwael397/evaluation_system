@@ -3,6 +3,7 @@ const { TaskRepo } = require('../repos/TaskRepo')
 const createNewTask = async (task) => {
 
     const new_task = await TaskRepo.createNewTask(task)
+    console.log(new_task)
     return new_task
 }
 
@@ -24,10 +25,11 @@ const getTasksByUserName = async (name) => {
     }
 }
 
-const InsertValue = async (user_task) => {
-    // console.log(user_task)
-    const new_user_task = await TaskRepo.InsertValue(user_task)
-    return new_user_task
+const InsertValue = async ({ users, value, task }) => {
+    const new_users_task = await TaskRepo.InsertValue(users, value, task)
+    console.log(users)
+
+    return new_users_task
 }
 
 const TaskController = {
@@ -37,4 +39,4 @@ const TaskController = {
     InsertValue
 }
 
-module.exports = {TaskController}
+module.exports = { TaskController }

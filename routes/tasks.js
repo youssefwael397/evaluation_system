@@ -15,7 +15,7 @@ router.post('/create', upload.none(), async (req, res) => {
     }
 
     try {
-        const new_task = TaskController.createNewTask(task)
+        const new_task = await TaskController.createNewTask(task)
         res.send({
             status: 'ok',
             new_task
@@ -29,35 +29,35 @@ router.post('/create', upload.none(), async (req, res) => {
 
 })
 
-router.get('/committee', async (req, res) => {
-    const tasks = await TaskController.getTasksByCommitteeName(req.query['name']);
+router.get('/committee/:name', async (req, res) => {
+    const tasks = await TaskController.getTasksByCommitteeName(req.params['name']);
     res.send({
         status: 'ok',
         tasks
     })
 })
 
-router.get('/user', async (req, res) => {
-    const tasks = await TaskController.getTasksByUserName(req.query['name']);
+router.get('/user/:name', async (req, res) => {
+    const tasks = await TaskController.getTasksByUserName(req.params['name']);
     res.send({
         status: 'ok',
         tasks
     })
 })
 
-router.post('/insert', upload.none(), async (req, res) => {
-
-    const user_task = {
-        task_name: req.body.task_name,
-        user_name: req.body.user_name,
+router.post('/insert', async (req, res) => {
+    const users_task = {
+        users: req.body.users,
+        task: req.body.task,
         value: req.body.value
     }
 
     try {
-        const new_user_task = await TaskController.InsertValue(user_task)
+        const new_users_task = await TaskController.InsertValue(users_task)
+        console.log(new_users_task)
         res.send({
             status: 'ok',
-            new_user_task
+            new_users_task
         })
     } catch (error) {
         res.status(403).send({
@@ -65,7 +65,6 @@ router.post('/insert', upload.none(), async (req, res) => {
             'error': error
         })
     }
-
 })
 
 module.exports = router

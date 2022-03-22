@@ -25,18 +25,17 @@ const getTasksByUserName = async (name) => {
     return tasks
 }
 
-const InsertValue = async (user_task) => {
-    console.log(user_task)
-    const user = await User.findOne({ where: { user_name: user_task.user_name } })
-    const user_id = user.user_id;
-    const task = await Task.findOne({ where: { task_name: user_task.task_name } })
-    const task_id = task.task_id;
-    const new_user_task = await User_Task.create({
-        value: user_task.value,
-        task_id: task_id,
-        user_id: user_id
+const InsertValue = async (users, value, task) => {
+
+    const new_users_task = await users.map(async (user) => {
+        await User_Task.create({
+            value: value,
+            task_id: task,
+            user_id: user.id
+        })
     })
-    return new_user_task
+
+    return `task: ${task} value: ${value} 's inserted to users ids:${users.map(user => { return ` ${user.id}` })}.`
 }
 
 const TaskRepo = {
@@ -46,4 +45,4 @@ const TaskRepo = {
     InsertValue
 }
 
-module.exports = {TaskRepo}
+module.exports = { TaskRepo }

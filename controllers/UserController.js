@@ -1,33 +1,109 @@
 const { UserRepo } = require('../repos/UserRepo')
 const bcrypt = require('bcryptjs')
 const haram_encrypt = require('../env');
+const fsAsync = require('fs').promises;
 
+
+// get all members of spe
 const getAllUsers = async () => {
     try {
         const users = await UserRepo.getAllUsers()
+        const promises = [];
+        users.forEach((user, index) => {
+            promises.push(new Promise(async (resolve, reject) => {
+                const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' });
+                user.image = img
+                resolve();
+            })
+            )
+        })
+        await Promise.all(promises);
         return users
     } catch (error) {
         console.log('getAllUsers error : ' + error)
     }
 }
 
+// get members by id
 const getUserById = async (id) => {
     const user = await UserRepo.getUserById(id);
+    const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' })
+    user.image = img
     return user;
 }
 
-const getActiveUsers = async (name) => {
+
+const getAllActiveUsers = async () => {
     try {
-        const active_users = await UserRepo.getActiveUsers(name)
+        const active_users = await UserRepo.getAllActiveUsers()
+        const promises = [];
+        active_users.forEach((user, index) => {
+            promises.push(new Promise(async (resolve, reject) => {
+                const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' });
+                user.image = img
+                resolve();
+            })
+            )
+        })
+        await Promise.all(promises);
         return active_users
     } catch (error) {
         console.log('getActiveUsers error : ' + error)
     }
 }
 
-const getDisActiveUsers = async (name) => {
+const getAllDisActiveUsers = async () => {
     try {
-        const disactive_users = await UserRepo.getDisActiveUsers(name)
+        const disactive_users = await UserRepo.getAllDisActiveUsers();
+        const promises = [];
+        disactive_users.forEach((user, index) => {
+            promises.push(new Promise(async (resolve, reject) => {
+                const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' });
+                user.image = img
+                resolve();
+            })
+            )
+        })
+        await Promise.all(promises);
+        return disactive_users;
+    } catch (error) {
+        console.log('getActiveUsers error : ' + error)
+    }
+}
+
+// get active members by committee id
+const getActiveUsersByCommitteeId = async (id) => {
+    try {
+        const active_users = await UserRepo.getActiveUsersByCommitteeId(id)
+        const promises = [];
+        active_users.forEach((user, index) => {
+            promises.push(new Promise(async (resolve, reject) => {
+                const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' });
+                user.image = img
+                resolve();
+            })
+            )
+        })
+        await Promise.all(promises);
+        return active_users
+    } catch (error) {
+        console.log('getActiveUsers error : ' + error)
+    }
+}
+
+const getDisActiveUsersByCommitteeId = async (id) => {
+    try {
+        const disactive_users = await UserRepo.getDisActiveUsersByCommitteeId(id)
+        const promises = [];
+        disactive_users.forEach((user, index) => {
+            promises.push(new Promise(async (resolve, reject) => {
+                const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' });
+                user.image = img
+                resolve();
+            })
+            )
+        })
+        await Promise.all(promises);
         return disactive_users
     } catch (error) {
         console.log('getDisActiveUsers error : ' + error)
@@ -85,9 +161,18 @@ const createNewAdmin = async (admin) => {
     console.log(USER)
 }
 
-const ActivateUser = async (id) => {
-    const updated_user = await UserRepo.ActivateUser(id);
+const ActivateUser = async (user_id, committee_id) => {
+    const updated_user = await UserRepo.ActivateUser(user_id, committee_id);
+    const img = await fsAsync.readFile(`images${updated_user.image}`, { encoding: 'base64' })
+    updated_user.image = img
     return updated_user
+}
+
+const DisActivateUser = async (user_id, committee_id) => {
+    const disactive_user = await UserRepo.DisActivateUser(user_id, committee_id);
+    const img = await fsAsync.readFile(`images${disactive_user.image}`, { encoding: 'base64' })
+    disactive_user.image = img
+    return disactive_user
 }
 
 const UpdateImage = async (user_id, image) => {
@@ -100,18 +185,32 @@ const login = async (login_user) => {
     return login_token
 }
 
+const EditUserById = async (user) => {
+    const edited_user = await UserRepo.EditUserById(user.user_id, user.email, user.phone, user.facebook)
+    return edited_user
+}
+
+const addSecondCommittee = async ({ user_id, committee_id }) => {
+    const edited_user = await UserRepo.addSecondCommittee(user_id, committee_id)
+    return edited_user
+}
 
 
 const UserController = {
     getAllUsers,
-    getActiveUsers,
-    getDisActiveUsers,
+    getUserById,
+    getAllActiveUsers,
+    getAllDisActiveUsers,
+    getActiveUsersByCommitteeId,
+    getDisActiveUsersByCommitteeId,
     getUsersByCommitteeName,
     createNewUser,
     createNewAdmin,
     ActivateUser,
     UpdateImage,
-    getUserById,
+    DisActivateUser,
+    EditUserById,
+    addSecondCommittee,
     login
 }
 
