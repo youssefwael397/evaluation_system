@@ -32,11 +32,17 @@ const InsertValue = async ({ users, value, task }) => {
     return new_users_task
 }
 
+const getUsersTasksByCommitteeId = async (commiittee_id) => {
+    const users = await TaskRepo.getUsersTasksByCommitteeId(commiittee_id)
+    return users
+}
+
 const TaskController = {
     createNewTask,
     getTasksByCommitteeName,
     getTasksByUserName,
-    InsertValue
+    InsertValue,
+    getUsersTasksByCommitteeId
 }
 
 module.exports = { TaskController }

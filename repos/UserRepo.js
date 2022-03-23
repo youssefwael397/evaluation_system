@@ -222,15 +222,40 @@ const login = async (login_user) => {
 
         if (user.first_com_active) {
 
+            const first_com = await Committee.findOne({where:{committee_id: user.first_com_id }})
+            const first_com_name = first_com.committee_name
+
             const login_token = jwt.sign({
                 user_id: user.user_id,
                 user_name: user.user_name,
                 email: user.email,
                 first_com_id: user.first_com_id,
-                second_com_id: user.second_com_id,
                 is_admin: user.is_admin,
+                first_com_name ,
                 exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24) // one day expiration
             }, haram_encrypt)
+            
+            
+            if(user.second_com_id !== null ){
+                
+                const second_com = await Committee.findOne({where:{committee_id: user.second_com_id }})
+
+                const second_com_name = second_com.committee_name    
+
+                const login_token = jwt.sign({
+                    user_id: user.user_id,
+                    user_name: user.user_name,
+                    email: user.email,
+                    first_com_id: user.first_com_id,
+                    second_com_id: user.second_com_id,
+                    is_admin: user.is_admin,
+                    first_com_name ,
+                    second_com_name,
+                    exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24) // one day expiration
+                }, haram_encrypt)
+
+                return login_token
+            }
 
             return login_token
 

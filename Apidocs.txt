@@ -114,17 +114,17 @@ body (formdata) : {
         committee_id
 }
 
-2- to get tasks by committee
+2- to get tasks and users by committee
 endpoint: host/tasks/:committee_name
 method  : get
 param   : committee_name
 
-3- to get tasks by committee
+3- to get users of task
 endpoint: host/tasks/user/:name
 method  : get
 param   : user_name
 
-3- to insert tasks value to user
+4- to insert tasks value to user
 endpoint: host/tasks/insert
 method  : post
 body (JSON) : {

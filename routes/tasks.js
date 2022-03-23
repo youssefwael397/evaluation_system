@@ -45,6 +45,15 @@ router.get('/user/:name', async (req, res) => {
     })
 })
 
+router.get('/users/:committee_id', async (req, res) => {
+
+    const tasks = await TaskController.getUsersTasksByCommitteeId(req.params.committee_id);
+    res.send({
+        status: 'ok',
+        tasks
+    })
+})
+
 router.post('/insert', async (req, res) => {
     const users_task = {
         users: req.body.users,
