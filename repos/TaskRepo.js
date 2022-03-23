@@ -19,7 +19,7 @@ const getTasksByCommitteeName = async (name) => {
 }
 
 const getTasksByUserName = async (name) => {
-    const user = await user.findOne({ where: { user_name: name } })
+    const user = await User.findOne({ where: { user_name: name } })
     const user_id = user.user_id;
     const tasks = await User_Task.findAll({ where: { user_id: user_id } });
     return tasks

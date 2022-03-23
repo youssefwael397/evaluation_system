@@ -15,25 +15,10 @@ const getAllUsers = async () => {
 const getUserById = async (id) => {
     const user = await User.findOne({
         where: {
-            user_id: id
+            user_id: id,
         },
-        include: [
-            {
-                model: Committee,
-                as: "first_com",
-                where: {
-                    first_com_id: "$first_com.committee_id$"
-                }
-            },
-            {
-                model: Committee,
-                as: "second_com",
-                where: {
-                    second_com_id: "$second_com.committee_id$"
-                }
-            }
-        ]
     })
+
     return user
 }
 
@@ -65,7 +50,6 @@ const getAllDisActiveUsers = async () => {
 
 // get active members in special committee by committee id
 const getActiveUsersByCommitteeId = async (id) => {
-    const promises = [];
 
 
     const active_users = await User.findAll({
@@ -76,25 +60,11 @@ const getActiveUsersByCommitteeId = async (id) => {
             ]
         },
     })
-
-    active_users.forEach((user, index) => {
-        promises.push(new Promise(async (resolve, reject) => {
-            const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' });
-            user.image = img
-            resolve();
-        })
-        )
-    })
-    await Promise.all(promises);
     return active_users
 }
 
 // get disactive members in special committee by committee id
 const getDisActiveUsersByCommitteeId = async (id) => {
-    console.log("disactive by com ")
-    console.log(id)
-
-    const promises = [];
     const disactive_users = await User.findAll({
         where: {
             [op.or]: [
@@ -104,15 +74,6 @@ const getDisActiveUsersByCommitteeId = async (id) => {
         },
     })
 
-    disactive_users.forEach((user, index) => {
-        promises.push(new Promise(async (resolve, reject) => {
-            const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' });
-            user.image = img
-            resolve();
-        })
-        )
-    })
-    await Promise.all(promises);
     return disactive_users
 }
 
@@ -250,14 +211,6 @@ const UpdateImage = async (user_id, image) => {
         { where: { user_id: user_id } }
     );
 
-    updated_user.forEach((user) => {
-        promises.push(new Promise(async (resolve, reject) => {
-            const image = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' })
-            user.image = image
-            resolve();
-        }))
-    })
-    await Promise.all(promises);
     return updated_user
 }
 

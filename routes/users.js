@@ -33,19 +33,21 @@ router.get('/:id', async (req, res) => {
 })
 
 // get all members of special committee
-router.get('/committee/:name', async (req, res) => {
-    const users = await UserController.getUsersByCommitteeName(req.params.name);
-    res.send({
-        status: 'ok',
-        users
-    })
-})
+// router.get('/committee/:name', async (req, res) => {
+//     const users = await UserController.getUsersByCommitteeName(req.params.name);
+//     res.send({
+//         status: 'ok',
+//         users
+//     })
+// })
 
 // get active or disactive members of all committees or special committee
 router.get('/', async (req, res) => {
     const { active, committee } = req.query;
     if (active == 1) {
+        console.log("active")
         if (committee != null) {
+            console.log("active by id")
             const active_users = await UserController.getActiveUsersByCommitteeId(committee);
             res.send({
                 status: 'ok',
@@ -102,7 +104,7 @@ router.post('/create', upload.single('image'), async (req, res) => { // upload.n
 
 // update image by user id and image
 router.put('/update/image', upload.single('image'), async (req, res) => {
-    const user_id = req.body.id;
+    const user_id = req.body.user_id;
     const image = req.file;
 
     const updated_user = await UserController.UpdateImage(user_id, image.filename);

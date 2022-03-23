@@ -177,6 +177,8 @@ const DisActivateUser = async (user_id, committee_id) => {
 
 const UpdateImage = async (user_id, image) => {
     const updated_user = await UserRepo.UpdateImage(user_id, image);
+    const img = await fsAsync.readFile(`images${updated_user.image}`, { encoding: 'base64' })
+    updated_user.image = img
     return updated_user
 }
 

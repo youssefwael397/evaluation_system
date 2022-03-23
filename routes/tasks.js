@@ -29,8 +29,8 @@ router.post('/create', upload.none(), async (req, res) => {
 
 })
 
-router.get('/committee/:name', async (req, res) => {
-    const tasks = await TaskController.getTasksByCommitteeName(req.params['name']);
+router.get('/:committee_name', async (req, res) => {
+    const tasks = await TaskController.getTasksByCommitteeName(req.params['committee_name']);
     res.send({
         status: 'ok',
         tasks

@@ -1,0 +1,137 @@
+1- all users
+endpoint: host/users/
+method  : get
+	
+2- one user by id
+endpoint: host/users/:id
+method  : get
+param   : id
+
+3- active or disactive members of all committees or special committee
+endpoint: host/users?active=1&committee=3
+method  : get
+query   : active (1,0) , committee(id)
+
+
+4- create new member
+endpoint: host/users/create
+method  : post
+body (form_data)  : {
+    user_name,
+    email,
+    password,
+    phone,
+    facebook,
+    gender,
+    faculty,
+    university,
+    image (file)
+    committee_name
+}
+
+5- to update user image
+endpoint: host/users/update/image
+method  : put
+body (form_data)  : image file
+
+6- to update user image
+endpoint: host/users/update/image
+method  : put
+body (form_data)  : image (file), user_id
+
+7- to edit user info
+endpoint: host/users/edit
+method  : put
+body (form_data)  : {
+    user_id,
+    email,
+    phone,
+    facebook
+}
+
+8- to add second committee
+endpoint: host/users/edit/secondcommittee
+method  : put
+body (form_data)  : {
+    user_id,
+    committee_id
+}
+
+9- to activate user in special committee
+endpoint: host/users/activate?user=100&committee=3
+method  : put
+query   : user(id), committee(id)
+
+10- to disactivate user in special committee
+endpoint: host/users/disactivate?user=100&committee=3
+method  : put
+query   : user(id), committee(id)
+
+11- to disactivate user in special committee
+endpoint: host/users/disactivate?user=100&committee=3
+method  : put
+query   : user(id), committee(id)
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+LOGIN
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+1- to login
+endpoint: host/login
+method  : post
+body (formdata) : {
+    email,
+    password
+}
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+COOMITTEES
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+1- to get committee
+endpoint: host/committees/:id
+method  : get
+param   : committee(id)
+
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+TASKS
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+1- to create task
+endpoint: host/tasks/create
+method  : post
+body (formdata) : {
+    task_name,
+        task_value,
+        type,
+        committee_id
+}
+
+2- to get tasks by committee
+endpoint: host/tasks/:committee_name
+method  : get
+param   : committee_name
+
+3- to get tasks by committee
+endpoint: host/tasks/user/:name
+method  : get
+param   : user_name
+
+3- to insert tasks value to user
+endpoint: host/tasks/insert
+method  : post
+body (JSON) : {
+    "users": [
+        {"id":100},
+        {"id":103},
+    ],
+    "value": 10,
+    "task": task_id
+}
