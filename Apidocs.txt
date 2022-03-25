@@ -97,7 +97,6 @@ endpoint: host/committees/:id
 method  : get
 param   : committee(id)
 
-
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 TASKS
@@ -115,14 +114,14 @@ body (formdata) : {
 }
 
 2- to get tasks and users by committee
-endpoint: host/tasks/:committee_name
+endpoint: host/tasks?committee=web&user=100&type=t
 method  : get
-param   : committee_name
+query   : {committee(name), user(id), type(t,m)}
 
 3- to get users of task
-endpoint: host/tasks/user/:name
+endpoint: host/tasks/user/id
 method  : get
-param   : user_name
+param   : id
 
 4- to insert tasks value to user
 endpoint: host/tasks/insert

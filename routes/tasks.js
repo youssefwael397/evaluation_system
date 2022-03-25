@@ -5,6 +5,7 @@ const multer = require('multer');
 const { TaskController } = require('../controllers/TaskController');
 const upload = multer()
 
+// create a new task in specific committee
 router.post('/create', upload.none(), async (req, res) => {
 
     const task = {
@@ -16,12 +17,19 @@ router.post('/create', upload.none(), async (req, res) => {
 
     try {
         const new_task = await TaskController.createNewTask(task)
-        res.send({
-            status: 'ok',
-            new_task
-        })
+        if (new_task) {
+            res.send({
+                status: 'ok',
+                message: `${task_name} successfully added.`
+            })
+        } else {
+            res.status(500).send({
+                status: 'error',
+                message: `Failed in adding ${task_name}`
+            })
+        }
     } catch (error) {
-        res.status(403).send({
+        res.status(500).send({
             'status': 'error',
             'error': error
         })
@@ -29,21 +37,56 @@ router.post('/create', upload.none(), async (req, res) => {
 
 })
 
-router.get('/:committee_name', async (req, res) => {
-    const tasks = await TaskController.getTasksByCommitteeName(req.params['committee_name']);
+// get all tasks of specific committee
+router.get('/', async (req, res) => {
+    const { committee, user, type } = req.query
+
+    try {
+        if (committee != null) {
+            if (user != null) {
+                if (type != null) {
+                    const tasks = await TaskController.getTasksByCommitteeNameAndUserIdAndType(committee, user, type);
+                    res.send({
+                        status: 'ok',
+                        tasks
+                    })
+                }
+                const tasks = await TaskController.getTasksByCommitteeNameAndUserId(committee, user);
+                res.send({
+                    status: 'ok',
+                    tasks
+                })
+            }
+            const tasks = await TaskController.getTasksByCommitteeName(committee);
+            res.send({
+                status: 'ok',
+                tasks
+            })
+        } else {
+            res.send({
+                status: 'ok',
+                message: "committee name and user id must not br empty."
+            })
+        }
+    } catch (error) {
+        res.status(500).send({
+            status: 'error',
+            error: error
+        })
+    }
+
+
+})
+
+// get user tasks of specific committee by user id
+router.get('/user/:id', async (req, res) => {
+    const tasks = await TaskController.getTasksByUserId(req.params['id']);
     res.send({
         status: 'ok',
         tasks
     })
 })
 
-router.get('/user/:name', async (req, res) => {
-    const tasks = await TaskController.getTasksByUserName(req.params['name']);
-    res.send({
-        status: 'ok',
-        tasks
-    })
-})
 
 router.get('/users/:committee_id', async (req, res) => {
 
@@ -54,6 +97,7 @@ router.get('/users/:committee_id', async (req, res) => {
     })
 })
 
+// Enter user value of specific task
 router.post('/insert', async (req, res) => {
     const users_task = {
         users: req.body.users,

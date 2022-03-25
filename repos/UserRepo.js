@@ -4,10 +4,11 @@ const bcrypt = require('bcryptjs')
 const haram_encrypt = require('../env')
 const jwt = require('jsonwebtoken');
 const op = Sequelize.Op;
+const attrs = ["user_id", "user_name", "email", "facebook", "phone", "image", "first_com_id", "second_com_id", "first_com_active", "second_com_active"]
 
 // get all members that are not admins
 const getAllUsers = async () => {
-    const users = await User.findAll({ where: { is_admin: false } })
+    const users = await User.findAll({ where: { is_admin: false }, attributes: attrs })
     return users
 }
 
@@ -17,6 +18,7 @@ const getUserById = async (id) => {
         where: {
             user_id: id,
         },
+        attributes: attrs
     })
 
     return user
@@ -25,6 +27,7 @@ const getUserById = async (id) => {
 // get all active members
 const getAllActiveUsers = async () => {
     const active_users = await User.findAll({
+        attributes: attrs,
         where: {
             [op.or]: [
                 { first_com_id: { [op.not]: null }, first_com_active: 1, is_admin: false },
@@ -38,6 +41,7 @@ const getAllActiveUsers = async () => {
 // get all disactive members
 const getAllDisActiveUsers = async () => {
     const disactive_users = await User.findAll({
+        attributes: attrs,
         where: {
             [op.or]: [
                 { first_com_id: { [op.not]: null }, first_com_active: 0, is_admin: false },
@@ -53,6 +57,7 @@ const getActiveUsersByCommitteeId = async (id) => {
 
 
     const active_users = await User.findAll({
+        attributes: attrs,
         where: {
             [op.or]: [
                 { first_com_id: id, first_com_active: true, is_admin: false },
@@ -66,6 +71,7 @@ const getActiveUsersByCommitteeId = async (id) => {
 // get disactive members in special committee by committee id
 const getDisActiveUsersByCommitteeId = async (id) => {
     const disactive_users = await User.findAll({
+        attributes: attrs,
         where: {
             [op.or]: [
                 { first_com_id: id, first_com_active: 0, is_admin: false },
@@ -81,6 +87,7 @@ const getDisActiveUsersByCommitteeId = async (id) => {
 const getUsersByCommitteeName = async (name) => {
     const promises = [];
     const users = await User.findAll({
+        attributes: attrs,
         where: {
             [op.or]: [
                 { "$first_com.committee_name$": name },
@@ -97,11 +104,10 @@ const getUsersByCommitteeName = async (name) => {
         }
         ]
     })
-    //console.log(usersTest)
     users.forEach((user) => {
         promises.push(new Promise(async (resolve, reject) => {
-            const image = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' })
-            user.image = image
+            const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' })
+            user.image = img
             resolve();
         }))
     })
@@ -148,9 +154,10 @@ const createNewAdmin = async (admin) => {
 }
 
 const ActivateUser = async (id, committee_id) => {
-    const user = await User.findOne(
-        { where: { user_id: id, is_admin: false } }
-    );
+    const user = await User.findOne({
+        attributes: attrs,
+        where: { user_id: id, is_admin: false }
+    });
 
     if (user.first_com_id == committee_id) {
         await User.update(
@@ -173,23 +180,29 @@ const ActivateUser = async (id, committee_id) => {
 
 const DisActivateUser = async (id, committee_id) => {
     const user = await User.findOne(
-        { where: { user_id: id, is_admin: false } }
+        {
+            attributes: attrs,
+            where: { user_id: id, is_admin: false }
+        }
     );
 
     if (user.first_com_id == committee_id) {
         await User.update(
-            { first_com_active: false },
+            { first_com_id: null, first_com_active: false },
             { where: { user_id: id } }
         )
     } else if (user.second_com_id == committee_id) {
         await User.update(
-            { second_com_active: false },
+            { second_com_id: null, second_com_active: false },
             { where: { user_id: id } }
         )
     }
 
     const disactive_user = await User.findOne(
-        { where: { user_id: id } }
+        {
+            attributes: attrs,
+            where: { user_id: id }
+        }
     );
 
     return disactive_user
@@ -208,7 +221,7 @@ const UpdateImage = async (user_id, image) => {
     )
 
     const updated_user = await User.findOne(
-        { where: { user_id: user_id } }
+        { attributes: attrs, where: { user_id: user_id } }
     );
 
     return updated_user
@@ -222,7 +235,7 @@ const login = async (login_user) => {
 
         if (user.first_com_active) {
 
-            const first_com = await Committee.findOne({where:{committee_id: user.first_com_id }})
+            const first_com = await Committee.findOne({ where: { committee_id: user.first_com_id } })
             const first_com_name = first_com.committee_name
 
             const login_token = jwt.sign({
@@ -231,16 +244,15 @@ const login = async (login_user) => {
                 email: user.email,
                 first_com_id: user.first_com_id,
                 is_admin: user.is_admin,
-                first_com_name ,
-                exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24) // one day expiration
+                first_com_name,
+                exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 7) // one week expiration
             }, haram_encrypt)
-            
-            
-            if(user.second_com_id !== null ){
-                
-                const second_com = await Committee.findOne({where:{committee_id: user.second_com_id }})
 
-                const second_com_name = second_com.committee_name    
+            if (user.second_com_id !== null) {
+
+                const second_com = await Committee.findOne({ where: { committee_id: user.second_com_id } })
+
+                const second_com_name = second_com.committee_name
 
                 const login_token = jwt.sign({
                     user_id: user.user_id,
@@ -249,9 +261,9 @@ const login = async (login_user) => {
                     first_com_id: user.first_com_id,
                     second_com_id: user.second_com_id,
                     is_admin: user.is_admin,
-                    first_com_name ,
+                    first_com_name,
                     second_com_name,
-                    exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24) // one day expiration
+                    exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 7) // one day expiration
                 }, haram_encrypt)
 
                 return login_token
@@ -272,18 +284,28 @@ const EditUserById = async (user_id, email, phone, facebook) => {
         { email: email, phone: phone, facebook: facebook },
         { where: { user_id: user_id } }
     )
-    const edited_user = await User.findOne({ where: { user_id: user_id } })
+    const edited_user = await User.findOne({ attributes: attrs, where: { user_id: user_id } })
     return edited_user
 }
 
 const addSecondCommittee = async (user_id, committee_id) => {
 
-    await User.update(
-        { second_com_id: committee_id },
-        { where: { user_id: user_id } }
-    )
-    const edited_user = await User.findOne({ where: { user_id: user_id } })
-    return edited_user
+    const user = await User.findOne({ attributes: attrs, where: { user_id: user_id } })
+    if (user.first_com_id == null) {
+        await User.update(
+            { first_com_id: committee_id },
+            { where: { user_id: user_id } }
+        )
+        const edited_user = await User.findOne({ attributes: attrs, where: { user_id: user_id } })
+        return edited_user
+    } else if (user.second_com_id == null) {
+        await User.update(
+            { second_com_id: committee_id },
+            { where: { user_id: user_id } }
+        )
+        const edited_user = await User.findOne({ attributes: attrs, where: { user_id: user_id } })
+        return edited_user
+    }
 }
 
 const UserRepo = {

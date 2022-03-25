@@ -16,16 +16,23 @@ const tasks = require('./routes/tasks')
 //     console.log('e')
 // }
 
-
+try {
+    app.use(express.json()); // built-in middleware for express
+    app.use(bodyParser.json()); // for parsing application/json
+    app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/xwww-form-urlencoded
+    app.use(cors());
+    app.use('/committees', committees);
+    app.use('/users', users);
+    app.use('/login', login);
+    app.use('/tasks', tasks);
+} catch (error) {
+    res.status(500).send({
+        status: 'error',
+        message: error
+    })
+}
 // miidlewares
-app.use(express.json()); // built-in middleware for express
-app.use(bodyParser.json()); // for parsing application/json
-app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/xwww-form-urlencoded
-app.use(cors());
-app.use('/committees', committees);
-app.use('/users', users);
-app.use('/login', login);
-app.use('/tasks', tasks);
+
 
 // creating a server
 app.listen(port, () => console.log(`server listening on port ${port}...`))

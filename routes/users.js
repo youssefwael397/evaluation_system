@@ -15,13 +15,13 @@ const upload = multer({ storage: storage })
 
 
 // get all members of spe
-router.get('/', async (req, res) => {
-    const users = await UserController.getAllUsers();
-    res.send({
-        status: 'ok',
-        users
-    })
-})
+// router.get('/', async (req, res) => {
+//     const users = await UserController.getAllUsers();
+//     res.send({
+//         status: 'ok',
+//         users
+//     })
+// })
 
 // get user by id
 router.get('/:id', async (req, res) => {
@@ -62,19 +62,22 @@ router.get('/', async (req, res) => {
         }
 
     } else {
-        if (committee != null) {
-            const disactive_users = await UserController.getDisActiveUsersByCommitteeId(committee);
-            res.send({
-                status: 'ok',
-                disactive_users
-            })
-        } else {
-            const disactive_users = await UserController.getAllDisActiveUsers(committee);
-            res.send({
-                status: 'ok',
-                disactive_users
-            })
+        if (active == 0) {
+            if (committee != null) {
+                const disactive_users = await UserController.getDisActiveUsersByCommitteeId(committee);
+                res.send({
+                    status: 'ok',
+                    disactive_users
+                })
+            } else {
+                const disactive_users = await UserController.getAllDisActiveUsers(committee);
+                res.send({
+                    status: 'ok',
+                    disactive_users
+                })
+            }
         }
+
     }
 
 
@@ -127,7 +130,7 @@ router.put('/edit', upload.none(), async (req, res) => {
 })
 
 // add second committee by user_id, commiittee_id
-router.put('/edit/secondcommittee', upload.none(), async (req, res) => {
+router.put('/addcommittee', upload.none(), async (req, res) => {
     const user = req.body;
     const edited_user = await UserController.addSecondCommittee(user);
     res.send({

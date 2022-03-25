@@ -1,6 +1,6 @@
 const { User, Task, User_Task, Committee, sequelize, Sequelize } = require('../models/index')
 const op = Sequelize.Op;
-
+const attrs = ["user_id", "user_name", "email", "facebook", "phone", "image", "first_com_id", "second_com_id", "first_com_active", "second_com_active"]
 
 
 const createNewTask = async (task) => {
@@ -14,24 +14,51 @@ const createNewTask = async (task) => {
 }
 
 const getTasksByCommitteeName = async (name) => {
-    const committee = await Committee.findOne({ 
-        where: { committee_name: name } 
+    const committee = await Committee.findOne({
+        where: { committee_name: name }
     })
     const committee_id = committee.committee_id;
-    const tasks = await Task.findAll({ 
-        where: { committee_id: committee_id } ,
+    const tasks = await Task.findAll({
+        where: { committee_id: committee_id },
         include: [{
             model: User,
-            required: true
-           }]
+            required: true,
+        }],
     });
     return tasks
 }
 
-const getTasksByUserName = async (name) => {
-    const user = await User.findOne({ where: { user_name: name } })
-    const user_id = user.user_id;
-    const tasks = await User_Task.findAll({ where: { user_id: user_id } });
+const getTasksByCommitteeNameAndUserId = async (name, user) => {
+    const committee = await Committee.findOne({
+        where: { committee_name: name }
+    })
+    const committee_id = committee.committee_id;
+    const tasks = await Task.findAll({
+        where: { committee_id: committee_id },
+        attributes: ["task_id", "task_name", "task_value", "type", "createdAt"],
+        include: [
+            {
+                model: User,
+                where: { user_id: user },
+                attributes: ["user_name", "image"]
+            }
+        ]
+    });
+
+    return tasks
+}
+
+const getTasksByUserId = async (id) => {
+    const tasks = await User_Task.findAll(
+        {
+            where: { user_id: id },
+            include: [
+                {
+                    model: Task,
+                    // attributes: []
+                }
+            ]
+        });
     return tasks
 }
 
@@ -57,18 +84,39 @@ const getUsersTasksByCommitteeId = async (committee_id) => {
                 { second_com_id: committee_id, second_com_active: 1, is_admin: false },
             ]
         },
-        
+
     })
 
     return users
 }
 
+const getTasksByCommitteeNameAndUserIdAndType = async (name, user, type) => {
+    const committee = await Committee.findOne({
+        where: { committee_name: name }
+    })
+    const committee_id = committee.committee_id;
+    const tasks = await Task.findAll({
+        where: { committee_id: committee_id, type: type },
+        attributes: ["task_id", "task_name", "task_value", "type", "createdAt"],
+        include: [
+            {
+                model: User,
+                where: { user_id: user },
+                attributes: ["user_name", "image"]
+            }
+        ]
+    });
+    return tasks
+}
+
 const TaskRepo = {
     createNewTask,
     getTasksByCommitteeName,
-    getTasksByUserName,
+    getTasksByUserId,
     InsertValue,
-    getUsersTasksByCommitteeId
+    getUsersTasksByCommitteeId,
+    getTasksByCommitteeNameAndUserId,
+    getTasksByCommitteeNameAndUserIdAndType
 }
 
 module.exports = { TaskRepo }
