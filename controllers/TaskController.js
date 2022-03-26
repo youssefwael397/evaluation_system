@@ -25,6 +25,16 @@ const getTasksByCommitteeNameAndUserId = async (committee, user) => {
     }
 }
 
+
+const getTasksByCommitteeNameAndType = async (committee, type) => {
+    try {
+        const tasks = await TaskRepo.getTasksByCommitteeNameAndType(committee, type)
+        return tasks
+    } catch (error) {
+        console.log('getTasksByCommitteeNameAndUserIdAndType error : ' + error)
+    }
+}
+
 const getTasksByCommitteeNameAndUserIdAndType = async (committee, user, type) => {
     try {
         const tasks = await TaskRepo.getTasksByCommitteeNameAndUserIdAndType(committee, user, type)
@@ -50,8 +60,8 @@ const InsertValue = async ({ users, value, task }) => {
     return new_users_task
 }
 
-const getUsersTasksByCommitteeId = async (commiittee_id) => {
-    const users = await TaskRepo.getUsersTasksByCommitteeId(commiittee_id)
+const getUsersTasksByCommitteeId = async (committee_id) => {
+    const users = await TaskRepo.getUsersTasksByCommitteeId(committee_id)
     return users
 }
 
@@ -62,7 +72,8 @@ const TaskController = {
     InsertValue,
     getUsersTasksByCommitteeId,
     getTasksByCommitteeNameAndUserId,
-    getTasksByCommitteeNameAndUserIdAndType
+    getTasksByCommitteeNameAndUserIdAndType,
+    getTasksByCommitteeNameAndType
 }
 
 module.exports = { TaskController }

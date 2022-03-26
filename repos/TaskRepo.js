@@ -90,6 +90,19 @@ const getUsersTasksByCommitteeId = async (committee_id) => {
     return users
 }
 
+
+const getTasksByCommitteeNameAndType = async (name, type) => {
+    const committee = await Committee.findOne({
+        where: { committee_name: name }
+    })
+    const committee_id = committee.committee_id;
+    const tasks = await Task.findAll({
+        where: { committee_id: committee_id, type: type },
+        attributes: ["task_id", "task_name", "task_value", "type", "createdAt"]
+    });
+    return tasks
+}
+
 const getTasksByCommitteeNameAndUserIdAndType = async (name, user, type) => {
     const committee = await Committee.findOne({
         where: { committee_name: name }
@@ -116,7 +129,8 @@ const TaskRepo = {
     InsertValue,
     getUsersTasksByCommitteeId,
     getTasksByCommitteeNameAndUserId,
-    getTasksByCommitteeNameAndUserIdAndType
+    getTasksByCommitteeNameAndUserIdAndType,
+    getTasksByCommitteeNameAndType
 }
 
 module.exports = { TaskRepo }

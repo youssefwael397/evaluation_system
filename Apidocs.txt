@@ -118,12 +118,7 @@ endpoint: host/tasks?committee=web&user=100&type=t
 method  : get
 query   : {committee(name), user(id), type(t,m)}
 
-3- to get users of task
-endpoint: host/tasks/user/id
-method  : get
-param   : id
-
-4- to insert tasks value to user
+3- to insert tasks value to user
 endpoint: host/tasks/insert
 method  : post
 body (JSON) : {

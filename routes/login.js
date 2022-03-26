@@ -6,13 +6,26 @@ const upload = multer()
 
 
 router.post('/', upload.none(), async (req, res) => {
-    const login_user = req.body;
-    const login_token = await UserController.login(login_user);
+    try {
+        const login_user = req.body;
+        const login_token = await UserController.login(login_user);
 
-    res.send({
-        status: 'ok',
-        login_token
-    })
+        if (login_token) {
+            res.send({
+                status: 'ok',
+                login_token
+            })
+        } else {
+            res.status(403).send({
+                status: 'error',
+                "error": "bad credentials please login again"
+            })
+        }
+
+    } catch (error) {
+
+    }
+
 
 })
 

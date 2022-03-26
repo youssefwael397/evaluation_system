@@ -117,15 +117,27 @@ const getUsersByCommitteeName = async (name) => {
 
 
 const createNewUser = async (user) => {
-    const committee = await Committee.findOne({ where: { committee_name: user.committee_name } })
-    const first_com_id = committee.committee_id;
-    await User.create({
-        ...user,
-        first_com_id: first_com_id
+    const exists_user = await User.findOne({
+        where: {
+            [op.or]: [
+                { email: user.email },
+                { phone: user.phone },
+                { facebook: user.facebook }
+            ]
+        },
     })
+    if (!exists_user) {
+        const committee = await Committee.findOne({ where: { committee_name: user.committee_name } })
+        const first_com_id = committee.committee_id;
+        await User.create({
+            ...user,
+            first_com_id: first_com_id
+        })
 
-    const new_user = await User.findOne({ where: { user_name: user.user_name } })
-    return new_user
+        const new_user = await User.findOne({ where: { email: user.email } })
+        return new_user
+    }
+
 }
 
 const createNewAdmin = async (admin) => {
@@ -233,7 +245,7 @@ const login = async (login_user) => {
 
     if (await bcrypt.compare(login_user.password, user.password)) {
 
-        if (user.first_com_active) {
+        if (user.first_com_active || user.second_com_active) {
 
             const first_com = await Committee.findOne({ where: { committee_id: user.first_com_id } })
             const first_com_name = first_com.committee_name
