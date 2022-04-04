@@ -188,7 +188,7 @@ const login = async (login_user) => {
 }
 
 const EditUserById = async (user) => {
-    const edited_user = await UserRepo.EditUserById(user.user_id, user.email, user.phone, user.facebook)
+    const edited_user = await UserRepo.EditUserById(user.user_id, user.user_name, user.spe_id, user.email, user.phone, user.facebook)
     return edited_user
 }
 

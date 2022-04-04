@@ -12,7 +12,8 @@ const storage = multer.diskStorage({
     }
 })
 const upload = multer({ storage: storage })
-
+const haram_encrypt = require('../env')
+const jwt = require('jsonwebtoken');
 
 const AdminAuthorization = (token, encrypt, res) => {
     if (token) {
@@ -41,25 +42,15 @@ const AdminAuthorization = (token, encrypt, res) => {
     }
 }
 
-// get all members of spe
-// router.get('/', async (req, res) => {
-//     const users = await UserController.getAllUsers();
-//     res.send({
-//         status: 'ok',
-//         users
-//     })
-// })
-
 // get user by id
 router.get('/:id', async (req, res) => {
     try {
-        if (AdminAuthorization(token, haram_encrypt, res)) {
-            const user = await UserController.getUserById(req.params.id);
-            res.send({
-                status: 'ok',
-                user
-            })
-        }
+        const user = await UserController.getUserById(req.params.id);
+        res.send({
+            status: 'ok',
+            user
+        })
+
     } catch {
         res.status(403).send({
             status: "error",
@@ -78,12 +69,17 @@ router.get('/:id', async (req, res) => {
 //     })
 // })
 
+
 // get active or disactive members of all committees or special committee
 router.get('/', async (req, res) => {
 
+    const token = req.body.token || req.headers.authorization
+    const { active, committee } = req.query;
+    console.log("welcome")
     try {
-        const { active, committee } = req.query;
+        console.log(haram_encrypt)
         if (AdminAuthorization(token, haram_encrypt, res)) {
+            console.log("authorized")
             if (active == 1) {
                 console.log("active")
                 if (committee != null) {
@@ -110,7 +106,7 @@ router.get('/', async (req, res) => {
                             disactive_users
                         })
                     } else {
-                        const disactive_users = await UserController.getAllDisActiveUsers(committee);
+                        const disactive_users = await UserController.getAllDisActiveUsers();
                         res.send({
                             status: 'ok',
                             disactive_users
@@ -193,15 +189,20 @@ router.put('/edit', upload.none(), async (req, res) => {
 
 // add second committee by user_id, committee_id
 router.put('/addcommittee', upload.none(), async (req, res) => {
+    const token = req.body.token || req.headers.authorization
+    const user = req.body;
+
     try {
-        if (AdminAuthorization(token, haram_encrypt, res)) {
-            const user = req.body;
-            const edited_user = await UserController.addSecondCommittee(user);
-            res.send({
-                status: 'ok',
-                edited_user
-            })
+        if (user) {
+            if (AdminAuthorization(token, haram_encrypt, res)) {
+                const edited_user = await UserController.addSecondCommittee(user);
+                res.send({
+                    status: 'ok',
+                    edited_user
+                })
+            }
         }
+
     } catch (error) {
         res.status(403).send({
             status: "error",
@@ -213,14 +214,15 @@ router.put('/addcommittee', upload.none(), async (req, res) => {
 
 // accept request of member by user Id and committee id
 router.put('/activate', async (req, res) => {
+    const token = req.body.token || req.headers.authorization
+    const { user, committee } = req.query;
 
     try {
         if (AdminAuthorization(token, haram_encrypt, res)) {
-            const user = req.body;
-            const edited_user = await UserController.addSecondCommittee(user);
+            const updated_user = await UserController.ActivateUser(user, committee);
             res.send({
                 status: 'ok',
-                edited_user
+                updated_user
             })
         }
     } catch (error) {
@@ -234,10 +236,11 @@ router.put('/activate', async (req, res) => {
 
 // disactive member by user Id and committee id
 router.put('/disactivate', async (req, res) => {
+    const token = req.body.token || req.headers.authorization
+    const { user, committee } = req.query;
 
     try {
         if (AdminAuthorization(token, haram_encrypt, res)) {
-            const { user, committee } = req.query;
             const updated_user = await UserController.DisActivateUser(user, committee);
             res.send({
                 status: 'ok',

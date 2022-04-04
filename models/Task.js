@@ -36,12 +36,11 @@ module.exports = (sequelize, DataTypes) => {
     committee_id: {
       type: DataTypes.INTEGER,
       require: true,
-      // references: {
-      //   model: 'committees',
-      //   key: 'committee_id'
-      // }
     },
-
+    month: {
+      type: DataTypes.INTEGER,
+      require: true,
+    },
   },
     {
       sequelize,

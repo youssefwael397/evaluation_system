@@ -1,19 +1,16 @@
-1- all users
-endpoint: host/users/
-method  : get
 	
-2- one user by id
+1- one user by id
 endpoint: host/users/:id
 method  : get
 param   : id
 
-3- active or disactive members of all committees or special committee
+2- active or disactive members of all committees or special committee
 endpoint: host/users?active=1&committee=3
 method  : get
 query   : active (1,0) , committee(id)
 
 
-4- create new member
+3- create new member
 endpoint: host/users/create
 method  : post
 body (form_data)  : {
@@ -29,17 +26,17 @@ body (form_data)  : {
     committee_name
 }
 
-5- to update user image
+4- to update user image
 endpoint: host/users/update/image
 method  : put
 body (form_data)  : image file
 
-6- to update user image
+5- to update user image
 endpoint: host/users/update/image
 method  : put
 body (form_data)  : image (file), user_id
 
-7- to edit user info
+6- to edit user info
 endpoint: host/users/edit
 method  : put
 body (form_data)  : {
@@ -49,7 +46,7 @@ body (form_data)  : {
     facebook
 }
 
-8- to add second committee
+7- to add second committee
 endpoint: host/users/edit/secondcommittee
 method  : put
 body (form_data)  : {
@@ -57,17 +54,17 @@ body (form_data)  : {
     committee_id
 }
 
-9- to activate user in special committee
+8- to activate user in special committee
 endpoint: host/users/activate?user=100&committee=3
 method  : put
 query   : user(id), committee(id)
 
-10- to disactivate user in special committee
+9- to disactivate user in special committee
 endpoint: host/users/disactivate?user=100&committee=3
 method  : put
 query   : user(id), committee(id)
 
-11- to disactivate user in special committee
+10- to disactivate user in special committee
 endpoint: host/users/disactivate?user=100&committee=3
 method  : put
 query   : user(id), committee(id)
@@ -110,7 +107,8 @@ body (formdata) : {
     task_name,
         task_value,
         type,
-        committee_id
+        committee_id,
+        month
 }
 
 2- to get tasks and users by committee

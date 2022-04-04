@@ -4,7 +4,8 @@ const bcrypt = require('bcryptjs')
 const haram_encrypt = require('../env')
 const jwt = require('jsonwebtoken');
 const op = Sequelize.Op;
-const attrs = ["user_id", "user_name", "email", "facebook", "phone", "image", "first_com_id", "second_com_id", "first_com_active", "second_com_active"]
+const attrs = ["user_id", "spe_id", "user_name", "email", "facebook", "phone", "image", "first_com_id", "second_com_id", "first_com_active", "second_com_active", "faculty", "university", "createdAt", "updatedAt"]
+
 
 // get all members that are not admins
 const getAllUsers = async () => {
@@ -14,14 +15,14 @@ const getAllUsers = async () => {
 
 // get member by id
 const getUserById = async (id) => {
-    const user = await User.findOne({
+    const current_user = await User.findOne({
+        attributes: attrs,
         where: {
             user_id: id,
         },
-        attributes: attrs
     })
 
-    return user
+    return current_user
 }
 
 // get all active members
@@ -203,6 +204,7 @@ const DisActivateUser = async (id, committee_id) => {
             { first_com_id: null, first_com_active: false },
             { where: { user_id: id } }
         )
+
     } else if (user.second_com_id == committee_id) {
         await User.update(
             { second_com_id: null, second_com_active: false },
@@ -212,13 +214,21 @@ const DisActivateUser = async (id, committee_id) => {
 
     const disactive_user = await User.findOne(
         {
-            attributes: attrs,
             where: { user_id: id }
         }
     );
 
+    if (disactive_user.first_com_id === null && disactive_user.second_com_id === null) {
+        await User.destroy({ where: { user_id: id } })
+        console.log('destroyed success')
+        return disactive_user
+    }
+
     return disactive_user
+
 }
+
+
 const UpdateImage = async (user_id, image) => {
 
     const user = await User.findOne(
@@ -242,58 +252,66 @@ const UpdateImage = async (user_id, image) => {
 const login = async (login_user) => {
 
     const user = await User.findOne({ where: { email: login_user.email } })
+    if (user) {
+        if (await bcrypt.compare(login_user.password, user.password)) {
 
-    if (await bcrypt.compare(login_user.password, user.password)) {
+            if (user.first_com_active || user.second_com_active) {
 
-        if (user.first_com_active || user.second_com_active) {
-
-            const first_com = await Committee.findOne({ where: { committee_id: user.first_com_id } })
-            const first_com_name = first_com.committee_name
-
-            const login_token = jwt.sign({
-                user_id: user.user_id,
-                user_name: user.user_name,
-                email: user.email,
-                first_com_id: user.first_com_id,
-                is_admin: user.is_admin,
-                first_com_name,
-                exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 7) // one week expiration
-            }, haram_encrypt)
-
-            if (user.second_com_id !== null) {
-
-                const second_com = await Committee.findOne({ where: { committee_id: user.second_com_id } })
-
-                const second_com_name = second_com.committee_name
+                const first_com = await Committee.findOne({ where: { committee_id: user.first_com_id } })
+                const first_com_name = first_com.committee_name
 
                 const login_token = jwt.sign({
                     user_id: user.user_id,
                     user_name: user.user_name,
                     email: user.email,
+                    facebook: user.facebook,
+                    phone: user.phone,
+                    spe_id: user.spe_id,
                     first_com_id: user.first_com_id,
-                    second_com_id: user.second_com_id,
                     is_admin: user.is_admin,
                     first_com_name,
-                    second_com_name,
-                    exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 7) // one day expiration
+                    exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 7) // one week expiration
                 }, haram_encrypt)
 
+                if (user.second_com_id !== null) {
+
+                    const second_com = await Committee.findOne({ where: { committee_id: user.second_com_id } })
+
+                    const second_com_name = second_com.committee_name
+
+                    const login_token = jwt.sign({
+                        user_id: user.user_id,
+                        user_name: user.user_name,
+                        email: user.email,
+                        facebook: user.facebook,
+                        phone: user.phone,
+                        spe_id: user.spe_id,
+                        first_com_id: user.first_com_id,
+                        second_com_id: user.second_com_id,
+                        is_admin: user.is_admin,
+                        first_com_name,
+                        second_com_name,
+                        exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 7) // one day expiration
+                    }, haram_encrypt)
+
+                    return login_token
+                }
+
                 return login_token
+
             }
-
-            return login_token
-
+        } else {
+            return false
+            console.log('password is false')
         }
-    } else {
-
-        console.log('password is false')
     }
+
 }
 
-const EditUserById = async (user_id, email, phone, facebook) => {
+const EditUserById = async (user_id, user_name, spe_id, email, phone, facebook) => {
 
     await User.update(
-        { email: email, phone: phone, facebook: facebook },
+        { email: email, phone: phone, facebook: facebook, spe_id: spe_id, user_name: user_name },
         { where: { user_id: user_id } }
     )
     const edited_user = await User.findOne({ attributes: attrs, where: { user_id: user_id } })

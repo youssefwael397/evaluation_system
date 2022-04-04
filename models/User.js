@@ -24,6 +24,11 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       require: true
     },
+    spe_id: {
+      type: DataTypes.INTEGER,
+      unique: true,
+      require: false
+    },
     user_name: {
       type: DataTypes.STRING,
       require: true
