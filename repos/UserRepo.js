@@ -318,7 +318,11 @@ const EditUserById = async (user_id, user_name, spe_id, email, phone, facebook) 
     return edited_user
 }
 
-const addSecondCommittee = async (user_id, committee_id) => {
+const addSecondCommittee = async (user_id, committee_name) => {
+
+    const committee = await Committee.findOne({ where: { committee_name: committee_name } })
+
+    const committee_id = committee.committee_id
 
     const user = await User.findOne({ attributes: attrs, where: { user_id: user_id } })
     if (user.first_com_id == null) {
@@ -333,7 +337,14 @@ const addSecondCommittee = async (user_id, committee_id) => {
             { second_com_id: committee_id },
             { where: { user_id: user_id } }
         )
-        const edited_user = await User.findOne({ attributes: attrs, where: { user_id: user_id } })
+        const edited_user = await User.findOne({
+            attributes: attrs,
+            where: {
+                user_id: user_id,
+                first_com_id: { [op.not]: null },
+                second_com_id: { [op.not]: null }
+            }
+        })
         return edited_user
     }
 }

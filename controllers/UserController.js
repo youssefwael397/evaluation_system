@@ -192,8 +192,8 @@ const EditUserById = async (user) => {
     return edited_user
 }
 
-const addSecondCommittee = async ({ user_id, committee_id }) => {
-    const edited_user = await UserRepo.addSecondCommittee(user_id, committee_id)
+const addSecondCommittee = async ({ user_id, committee }) => {
+    const edited_user = await UserRepo.addSecondCommittee(user_id, committee)
     return edited_user
 }
 
