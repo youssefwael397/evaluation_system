@@ -1,8 +1,9 @@
-const { User, Committee, Sequelize } = require('../models/index')
+const { User, Committee,Task, Sequelize } = require('../models/index')
 const fs = require('fs');
 const bcrypt = require('bcryptjs')
 const haram_encrypt = require('../env')
 const jwt = require('jsonwebtoken');
+const user_task = require('../models/user_task');
 const op = Sequelize.Op;
 const attrs = ["user_id", "spe_id", "user_name", "email", "facebook", "phone", "image", "first_com_id", "second_com_id", "first_com_active", "second_com_active", "faculty", "university", "createdAt", "updatedAt"]
 
@@ -12,7 +13,20 @@ const getAllUsers = async () => {
     const users = await User.findAll({ where: { is_admin: false }, attributes: attrs })
     return users
 }
-
+const getLeaderBoard = async()=>{
+    console.log("bsm ellah")
+    const users = await User.findAll({
+        attributes:{
+            include:[[Sequelize.fn("COALESCE",Sequelize.fn("sum", Sequelize.col("Tasks.task_value")),0),"grades"]]
+        },
+        include:{
+        model:Task,
+        attributes:[]
+    },
+    group: ['User.user_name'],
+    subQuery: false,})
+    return users;
+}
 // get member by id
 const getUserById = async (id) => {
     const current_user = await User.findOne({
@@ -345,6 +359,7 @@ const UserRepo = {
     getAllDisActiveUsers,
     getDisActiveUsersByCommitteeId,
     getUsersByCommitteeName,
+    getLeaderBoard,
     createNewUser,
     createNewAdmin,
     ActivateUser,
