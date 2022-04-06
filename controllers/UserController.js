@@ -119,6 +119,12 @@ const getUsersByCommitteeName = async (name) => {
     }
 }
 
+const getLeaderBoard = async(name)=>{
+    console.log("bsmellah")
+    const users = await UserRepo.getLeaderBoard();
+    return users;
+}
+
 const createNewUser = async (user) => {
     const password_hashed = await bcrypt.hash(user.password, 10);
     const NEW_USER = { ...user, password: password_hashed }
@@ -206,6 +212,7 @@ const UserController = {
     getActiveUsersByCommitteeId,
     getDisActiveUsersByCommitteeId,
     getUsersByCommitteeName,
+    getLeaderBoard,
     createNewUser,
     createNewAdmin,
     ActivateUser,

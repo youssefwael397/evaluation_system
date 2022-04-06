@@ -41,7 +41,10 @@ const AdminAuthorization = (token, encrypt, res) => {
         })
     }
 }
-
+router.get("/board/",async(req,res)=>{
+    const users = await UserController.getLeaderBoard()
+    return res.json(users);
+})
 // get user by id
 router.get('/:id', async (req, res) => {
     try {
