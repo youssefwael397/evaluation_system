@@ -119,9 +119,19 @@ const getUsersByCommitteeName = async (name) => {
     }
 }
 
-const getLeaderBoard = async(name)=>{
+const getLeaderBoard = async (name, month) => {
     console.log("bsmellah")
-    const users = await UserRepo.getLeaderBoard();
+    const users = await UserRepo.getLeaderBoard(name, month);
+    const promises = [];
+    users.forEach((user, index) => {
+        promises.push(new Promise(async (resolve, reject) => {
+            const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' });
+            user.image = img
+            resolve();
+        })
+        )
+    })
+    await Promise.all(promises);
     return users;
 }
 
