@@ -59,7 +59,7 @@ router.get('/:id', async (req, res) => {
             user
         })
 
-    } catch {
+    } catch (error) {
         res.status(403).send({
             status: "error",
             error

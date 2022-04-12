@@ -19,30 +19,27 @@ const getLeaderBoard = async (committee_name, month) => {
     const committee = await Committee.findOne({ where: { committee_name: committee_name } })
     const committee_id = committee.committee_id;
     console.log("bsm ellah")
-    const users = await sequelize.query(`
-    SELECT COALESCE(sum(User_Tasks.value),0) as user_grades,
-    COALESCE(sum(tasks.task_value),0) as task_grades,
-    Tasks.type, Users.user_name, Users.image 
+    const users = await sequelize.query(`SELECT COALESCE(sum(User_Tasks.value),0) as user_grades,
+    COALESCE(sum(Tasks.task_value),0) as task_grades,
+    Tasks.type, Users.user_name, Users.image
     from User_Tasks 
     LEFT join Tasks 
     on Tasks.task_id = User_Tasks.task_id 
     RIGHT JOIN Users 
     ON Users.user_id = User_Tasks.user_id
-    WHERE users.is_admin = false 
-    AND tasks.committee_id = ${committee_id}
-    AND tasks.month = ${month}
-    AND ( users.first_com_id = ${committee_id}
-    AND first_com_active = true )
-    OR (users.second_com_id = ${committee_id}
-    AND second_com_active = true )
-    GROUP BY Users.user_name, Tasks.type;
-    `);
+    where Tasks.type is not null
+    and users.is_admin = false
+    and tasks.committee_id = ${committee_id}
+    and tasks.month = ${month}
+    and (( users.first_com_id = ${committee_id}
+        and first_com_active = true )
+        or (users.second_com_id = ${committee_id} 
+            and second_com_active = true ) )
+    GROUP by Users.user_name, Tasks.type`, { type: sequelize.QueryTypes.SELECT });
 
-
-    const board = await users[0]
     let new_board = []
 
-    board.map((user, index) => {
+    users.map((user, index) => {
         if (index == 0) {
             new_board.push(user)
         } else {
