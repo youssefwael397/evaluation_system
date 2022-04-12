@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "spesuscc_youssef_wael",
-    "password": "1234567890Aa",
-    "database": "spesuscc_evaluation_system",
-    "host": "68.66.226.111",
+    "username": "root",
+    "password": null,
+    "database": "spe_evaluation_system",
+    "host": "localhost",
     "dialect": "mysql"
   },
   "test": {
@@ -15,9 +15,9 @@
   },
   "production": {
     "username": "spesuscc_youssef_wael",
-    "password": "console.log(hacking);",
+    "password": "1234567890Aa",
     "database": "spesuscc_evaluation_system",
-    "host": "https://spesusc.com",
+    "host": "68.66.226.111",
     "dialect": "mysql"
   }
 }
