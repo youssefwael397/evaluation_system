@@ -23,7 +23,10 @@ router.post('/', upload.none(), async (req, res) => {
         }
 
     } catch (error) {
-
+        res.status(503).send({
+            status: 'error',
+            error
+        })
     }
 
 
