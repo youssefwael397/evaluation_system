@@ -279,7 +279,7 @@ const UpdateImage = async (user_id, image) => {
         { where: { user_id: user_id } }
     );
 
-    fs.unlinkSync(`images/${user.image}`)
+    // fs.unlinkSync(`images/${user.image}`)
 
     await User.update(
         { image: image },
