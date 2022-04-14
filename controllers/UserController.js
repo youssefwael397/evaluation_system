@@ -11,8 +11,10 @@ const getAllUsers = async () => {
         const promises = [];
         users.forEach((user, index) => {
             promises.push(new Promise(async (resolve, reject) => {
+
                 const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' });
-                user.image = img
+                img ? user.image = img : null
+
                 resolve();
             })
             )
@@ -27,8 +29,10 @@ const getAllUsers = async () => {
 // get members by id
 const getUserById = async (id) => {
     const user = await UserRepo.getUserById(id);
+
     const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' })
-    user.image = img
+    img ? user.image = img : null
+
     return user;
 }
 
@@ -39,8 +43,10 @@ const getAllActiveUsers = async () => {
         const promises = [];
         active_users.forEach((user, index) => {
             promises.push(new Promise(async (resolve, reject) => {
+
                 const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' });
-                user.image = img
+                img ? user.image = img : null
+
                 resolve();
             })
             )
@@ -58,8 +64,10 @@ const getAllDisActiveUsers = async () => {
         const promises = [];
         disactive_users.forEach((user, index) => {
             promises.push(new Promise(async (resolve, reject) => {
+
                 const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' });
-                user.image = img
+                img ? user.image = img : null
+
                 resolve();
             })
             )
@@ -78,8 +86,10 @@ const getActiveUsersByCommitteeId = async (id) => {
         const promises = [];
         active_users.forEach((user, index) => {
             promises.push(new Promise(async (resolve, reject) => {
+
                 const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' });
-                user.image = img
+                img ? user.image = img : null
+
                 resolve();
             })
             )
@@ -97,8 +107,10 @@ const getDisActiveUsersByCommitteeId = async (id) => {
         const promises = [];
         disactive_users.forEach((user, index) => {
             promises.push(new Promise(async (resolve, reject) => {
+
                 const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' });
-                user.image = img
+                img ? user.image = img : null
+
                 resolve();
             })
             )
@@ -125,8 +137,10 @@ const getLeaderBoard = async (name, month) => {
     const promises = [];
     users.forEach((user, index) => {
         promises.push(new Promise(async (resolve, reject) => {
+
             const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' });
-            user.image = img
+            img ? user.image = img : null
+
             resolve();
         })
         )
@@ -179,22 +193,28 @@ const createNewAdmin = async (admin) => {
 
 const ActivateUser = async (user_id, committee_id) => {
     const updated_user = await UserRepo.ActivateUser(user_id, committee_id);
+
     const img = await fsAsync.readFile(`images${updated_user.image}`, { encoding: 'base64' })
-    updated_user.image = img
+    img ? updated_user.image = img : null
+
     return updated_user
 }
 
 const DisActivateUser = async (user_id, committee_id) => {
     const disactive_user = await UserRepo.DisActivateUser(user_id, committee_id);
+
     const img = await fsAsync.readFile(`images${disactive_user.image}`, { encoding: 'base64' })
-    disactive_user.image = img
+    img ? disactive_user.image = img : null
+
     return disactive_user
 }
 
 const UpdateImage = async (user_id, image) => {
     const updated_user = await UserRepo.UpdateImage(user_id, image);
+
     const img = await fsAsync.readFile(`images${updated_user.image}`, { encoding: 'base64' })
-    updated_user.image = img
+    img ? updated_user.image = img : null
+
     return updated_user
 }
 
