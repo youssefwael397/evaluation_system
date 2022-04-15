@@ -9,6 +9,7 @@ const getAllUsers = async () => {
     try {
         const users = await UserRepo.getAllUsers()
         const promises = [];
+
         users.forEach((user, index) => {
             promises.push(new Promise(async (resolve, reject) => {
 
@@ -20,6 +21,7 @@ const getAllUsers = async () => {
             )
         })
         await Promise.all(promises);
+
         return users
     } catch (error) {
         console.log('getAllUsers error : ' + error)
@@ -41,6 +43,7 @@ const getAllActiveUsers = async () => {
     try {
         const active_users = await UserRepo.getAllActiveUsers()
         const promises = [];
+
         active_users.forEach((user, index) => {
             promises.push(new Promise(async (resolve, reject) => {
 
@@ -52,6 +55,7 @@ const getAllActiveUsers = async () => {
             )
         })
         await Promise.all(promises);
+
         return active_users
     } catch (error) {
         console.log('getActiveUsers error : ' + error)
@@ -84,6 +88,8 @@ const getActiveUsersByCommitteeId = async (id) => {
     try {
         const active_users = await UserRepo.getActiveUsersByCommitteeId(id)
         const promises = [];
+
+
         active_users.forEach((user, index) => {
             promises.push(new Promise(async (resolve, reject) => {
 
@@ -105,6 +111,8 @@ const getDisActiveUsersByCommitteeId = async (id) => {
     try {
         const disactive_users = await UserRepo.getDisActiveUsersByCommitteeId(id)
         const promises = [];
+
+
         disactive_users.forEach((user, index) => {
             promises.push(new Promise(async (resolve, reject) => {
 
@@ -135,6 +143,8 @@ const getLeaderBoard = async (name, month) => {
     console.log("bsmellah")
     const users = await UserRepo.getLeaderBoard(name, month);
     const promises = [];
+
+
     users.forEach((user, index) => {
         promises.push(new Promise(async (resolve, reject) => {
 
