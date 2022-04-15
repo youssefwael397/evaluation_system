@@ -4,6 +4,10 @@ const haram_encrypt = require('../env');
 const fsAsync = require('fs').promises;
 
 
+
+
+
+
 // get all members of spe
 const getAllUsers = async () => {
     try {
@@ -46,6 +50,7 @@ const getAllActiveUsers = async () => {
 
         active_users.forEach((user, index) => {
             promises.push(new Promise(async (resolve, reject) => {
+
 
                 const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' });
                 img ? user.image = img : null
