@@ -11,9 +11,34 @@ const storage = multer.diskStorage({
         cb(null, '/' + file.fieldname + '-' + uniqueSuffix + '.png')
     }
 })
+
 const upload = multer({ storage: storage })
 const haram_encrypt = require('../env')
 const jwt = require('jsonwebtoken');
+
+
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+    apiKey: "AIzaSyBUkAH5frR0Aqi0XUQzptx82fJua3yZpUo",
+    authDomain: "spe-evaluation-system-files.firebaseapp.com",
+    projectId: "spe-evaluation-system-files",
+    storageBucket: "spe-evaluation-system-files.appspot.com",
+    messagingSenderId: "407409047682",
+    appId: "1:407409047682:web:399051a54d9e119c739c9b",
+    measurementId: "G-RX4WP40282"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
 
 const AdminAuthorization = (token, encrypt, res) => {
     if (token) {
@@ -137,6 +162,8 @@ router.get('/', async (req, res) => {
 router.post('/create', upload.single('image'), async (req, res) => { // upload.none()
     try {
         const image = req.file;
+        const storageRef = app.storage.ref(`images${image.filename}`)
+        storageRef.put(image)
         const user = { ...req.body, image: image.filename }
         const signUser = await UserController.createNewUser(user)
         console.log(signUser)
