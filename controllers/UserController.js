@@ -170,12 +170,12 @@ const createNewUser = async (user) => {
 
     try {
         const new_user = await UserRepo.createNewUser(NEW_USER);
+        console.log("new user")
         console.log(new_user)
         return new_user
     } catch (error) {
         console.log('createNewUser error : ' + error)
     }
-    console.log(USER)
 }
 
 const createNewAdmin = async (admin) => {
@@ -227,8 +227,8 @@ const DisActivateUser = async (user_id, committee_id) => {
 const UpdateImage = async (user_id, image) => {
     const updated_user = await UserRepo.UpdateImage(user_id, image);
 
-    const img = await fsAsync.readFile(`images${updated_user.image}`, { encoding: 'base64' })
-    img ? updated_user.image = img : null
+    //const img = await fsAsync.readFile(`images${updated_user.image}`, { encoding: 'base64' })
+    //img ? updated_user.image = img : null
 
     return updated_user
 }

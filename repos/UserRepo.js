@@ -180,6 +180,7 @@ const createNewUser = async (user) => {
         })
 
         const new_user = await User.findOne({ where: { email: user.email } })
+        console.log(new_user)
         return new_user
     }
 

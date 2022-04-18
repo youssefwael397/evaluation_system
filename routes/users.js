@@ -2,19 +2,20 @@ const express = require('express');
 const router = express.Router();
 const { UserController } = require('../controllers/UserController')
 const multer = require('multer')
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, './images')
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-        cb(null, '/' + file.fieldname + '-' + uniqueSuffix + '.png')
-    }
-})
-const upload = multer({ storage: storage })
+const { storage,  uploadBytes, uploadString} = require ("../firebase")
+const { getDownloadURL, ref } = require ("firebase/storage");
+const { v4: uuid4 } = require('uuid');
+
+const upload = multer({ storage: multer.memoryStorage() })
 const haram_encrypt = require('../env')
 const jwt = require('jsonwebtoken');
-
+const uploadAndGetUrl = async (image) => {
+    const imagesRef = ref(storage, `/images/${uuid4()}`)
+    console.log(image)
+    const snapshot = await uploadBytes(imagesRef, image);
+    const URL = await getDownloadURL(snapshot.ref)
+    return URL;
+  }
 const AdminAuthorization = (token, encrypt, res) => {
     if (token) {
         const verify = jwt.verify(token, encrypt)
@@ -136,8 +137,10 @@ router.get('/', async (req, res) => {
 // create new member
 router.post('/create', upload.single('image'), async (req, res) => { // upload.none()
     try {
-        const image = req.file;
-        const user = { ...req.body, image: image.filename }
+        const image = req.file.buffer;
+        console.log(image)
+        const image_url = await uploadAndGetUrl(image.buffer)
+        const user = { ...req.body, image: image_url }
         const signUser = await UserController.createNewUser(user)
         console.log(signUser)
         if (signUser) {
@@ -153,6 +156,7 @@ router.post('/create', upload.single('image'), async (req, res) => { // upload.n
         }
 
     } catch (error) {
+        console.log(error)
         res.status(400).send({
             'status': 'error',
             error
@@ -166,9 +170,9 @@ router.put('/update/image', upload.single('image'), async (req, res) => {
 
     try {
         const user_id = req.body.user_id;
-        const image = req.file;
-
-        const updated_user = await UserController.UpdateImage(user_id, image.filename);
+        const image = req.file.buffer;
+        const image_url = await uploadAndGetUrl(image.buffer)
+        const updated_user = await UserController.UpdateImage(user_id, image_url);
 
         res.send({
             status: 'ok',
