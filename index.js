@@ -9,13 +9,12 @@ const users = require('./routes/users')
 const login = require('./routes/login')
 const tasks = require('./routes/tasks')
 
-// to update schema of models
-// try {
-//     sequelize.sync({ alter: true })
-// } catch (error) {
-//     console.log('e')
-// }
-
+/* try {
+    sequelize.sync({ force: true })
+} catch (error) {
+    console.log('e')
+}
+ */
 try {
     app.use(express.json()); // built-in middleware for express
     app.use(bodyParser.json()); // for parsing application/json
