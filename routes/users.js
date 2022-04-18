@@ -2,20 +2,20 @@ const express = require('express');
 const router = express.Router();
 const { UserController } = require('../controllers/UserController')
 const multer = require('multer')
-const { storage,  uploadBytes, uploadString} = require ("../firebase")
-const { getDownloadURL, ref } = require ("firebase/storage");
+const { storage, uploadBytes, uploadString } = require("../firebase")
+const { getDownloadURL, ref } = require("firebase/storage");
 const { v4: uuid4 } = require('uuid');
 
 const upload = multer({ storage: multer.memoryStorage() })
 const haram_encrypt = require('../env')
 const jwt = require('jsonwebtoken');
 const uploadAndGetUrl = async (image) => {
-    const imagesRef = ref(storage, `/images/${uuid4()}`)
+    const imagesRef = ref(storage, `/images/${uuid4()}.png`)
     console.log(image)
     const snapshot = await uploadBytes(imagesRef, image);
     const URL = await getDownloadURL(snapshot.ref)
     return URL;
-  }
+}
 const AdminAuthorization = (token, encrypt, res) => {
     if (token) {
         const verify = jwt.verify(token, encrypt)
