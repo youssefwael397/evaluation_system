@@ -41,7 +41,6 @@ const getTasksByCommitteeNameAndUserId = async (name, user) => {
             {
                 model: User,
                 where: { user_id: user },
-                attributes: ["user_name", "image"]
             }
         ]
     });
@@ -109,12 +108,6 @@ const getTaskUsers = async (id) => {
             include: [
                 {
                     model: User,
-                    where: {
-                        [op.or]: [
-                            { first_com_id: task.committee_id, first_com_active: 1, is_admin: false },
-                            { second_com_id: task.committee_id, second_com_active: 1, is_admin: false },
-                        ]
-                    }
                 }
             ]
         });
