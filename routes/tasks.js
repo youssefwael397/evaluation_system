@@ -210,6 +210,7 @@ router.get('/users/:id', async (req, res) => {
         })
 
     } catch (error) {
+
         res.status(403).send({
             'status': 'error',
             'error': error
@@ -283,8 +284,6 @@ router.post('/insert', async (req, res) => {
         task: req.body.task,
         value: +req.body.value
     }
-
-    // const users = JSON.parse(users_task)
 
     const token = req.body.token || req.headers.authorization
     try {

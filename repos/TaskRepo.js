@@ -130,13 +130,28 @@ const InsertValue = async (users, value, task) => {
     console.log(task)
     try {
         const new_users_task = await users.forEach((async (user) => {
+
             console.log(user.name)
             const current_user = await User.findOne({ where: { user_name: user.name } })
-            await User_Task.create({
-                value: value,
-                task_id: task,
-                user_id: current_user.user_id
-            })
+            const user_task = await User_Task.findOne({ where: { task_id: task, user_id: current_user.user_id } })
+            if (!user_task) {
+                await User_Task.create({
+                    value: value,
+                    task_id: task,
+                    user_id: current_user.user_id
+                })
+            } else {
+                await User_Task.update(
+                    {
+                        value: value,
+                        task_id: task,
+                    },
+                    {
+                        where: {
+                            user_id: current_user.user_id
+                        }
+                    })
+            }
 
         }))
         return `task: ${task} with value: ${value} 's inserted to: ${users.map(user => { return ` ${user.name}` })}.`
