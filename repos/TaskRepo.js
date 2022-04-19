@@ -144,11 +144,11 @@ const InsertValue = async (users, value, task) => {
                 await User_Task.update(
                     {
                         value: value,
-                        task_id: task,
                     },
                     {
                         where: {
-                            user_id: current_user.user_id
+                            user_id: current_user.user_id,
+                            task_id: task,
                         }
                     })
             }
