@@ -11,17 +11,7 @@ const createNewTask = async (task) => {
 const getTasksByCommitteeName = async (name) => {
     try {
         const tasks = await TaskRepo.getTasksByCommitteeName(name)
-        const promises = [];
-        tasks.forEach(async (task, index) => {
-            await task.Users.forEach(async user => {
-                promises.push(new Promise(async (resolve, reject) => {
-                    const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' });
-                    user.image = img
-                    resolve();
-                }))
-            });
-        })
-        await Promise.all(promises);
+
         return tasks
     } catch (error) {
         console.log('getTasksByCommitteeName error : ' + error)
@@ -31,17 +21,7 @@ const getTasksByCommitteeName = async (name) => {
 const getTasksByCommitteeNameAndUserId = async (committee, user) => {
     try {
         const tasks = await TaskRepo.getTasksByCommitteeNameAndUserId(committee, user)
-        const promises = [];
-        tasks.forEach(async (task, index) => {
-            await task.Users.forEach(async user => {
-                promises.push(new Promise(async (resolve, reject) => {
-                    const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' });
-                    user.image = img
-                    resolve();
-                }))
-            });
-        })
-        await Promise.all(promises);
+
         return tasks
     } catch (error) {
         console.log('getTasksByCommitteeNameAndUserId error : ' + error)
@@ -60,17 +40,7 @@ const getTasksByCommitteeNameAndUserIdAndMonth = async (committee, user, month) 
 const getTasksByCommitteeNameAndType = async (committee, type) => {
     try {
         const tasks = await TaskRepo.getTasksByCommitteeNameAndType(committee, type)
-        const promises = [];
-        tasks.forEach(async (task, index) => {
-            await task.Users.forEach(async user => {
-                promises.push(new Promise(async (resolve, reject) => {
-                    const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' });
-                    user.image = img
-                    resolve();
-                }))
-            });
-        })
-        await Promise.all(promises);
+
         return tasks
     } catch (error) {
         console.log('getTasksByCommitteeNameAndUserIdAndType error : ' + error)
@@ -80,17 +50,7 @@ const getTasksByCommitteeNameAndType = async (committee, type) => {
 const getTasksByCommitteeNameAndUserIdAndType = async (committee, user, type) => {
     try {
         const tasks = await TaskRepo.getTasksByCommitteeNameAndUserIdAndType(committee, user, type)
-        const promises = [];
-        tasks.forEach(async (task, index) => {
-            await task.Users.forEach(async user => {
-                promises.push(new Promise(async (resolve, reject) => {
-                    const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' });
-                    user.image = img
-                    resolve();
-                }))
-            });
-        })
-        await Promise.all(promises);
+
         return tasks
     } catch (error) {
         console.log('getTasksByCommitteeNameAndUserIdAndType error : ' + error)
@@ -119,18 +79,6 @@ const getUsersByTaskId = async (id) => {
 const getTaskUsers = async (id) => {
     try {
         const task = await TaskRepo.getTaskUsers(id)
-        console.log(task)
-        // if (task.Users) {
-        //     const promises = [];
-        //     await task.Users.forEach(async user => {
-        //         promises.push(new Promise(async (resolve, reject) => {
-        //             const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' });
-        //             user.image = img
-        //             resolve();
-        //         }))
-        //     });
-        //     await Promise.all(promises);
-        // }
 
         return task
     } catch (error) {
@@ -146,33 +94,13 @@ const InsertValue = async ({ users, value, task }) => {
 
 const getUsersTasksByCommitteeId = async (committee_id) => {
     const users = await TaskRepo.getUsersTasksByCommitteeId(committee_id)
-    const promises = [];
-    tasks.forEach(async (task, index) => {
-        await task.Users.forEach(async user => {
-            promises.push(new Promise(async (resolve, reject) => {
-                const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' });
-                user.image = img
-                resolve();
-            }))
-        });
-    })
-    await Promise.all(promises);
+
     return users
 }
 
 const getTasksByCommitteeNameAndTypeAndMonth = async (committee, type, month) => {
     const users = await TaskRepo.getTasksByCommitteeNameAndTypeAndMonth(committee, type, month)
-    const promises = [];
-    users.forEach(async (task, index) => {
-        await task.Users.forEach(async user => {
-            promises.push(new Promise(async (resolve, reject) => {
-                const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' });
-                user.image = img
-                resolve();
-            }))
-        });
-    })
-    await Promise.all(promises);
+
     return users
 }
 
@@ -183,17 +111,7 @@ const getTasksByCommitteeNameAndTypeAndMonthAndUser = async (user, committee, ty
 
 const getTasksByCommitteeNameAndMonth = async (committee, month) => {
     const users = await TaskRepo.getTasksByCommitteeNameAndMonth(committee, month)
-    const promises = [];
-    users.forEach(async (task, index) => {
-        await task.Users.forEach(async user => {
-            promises.push(new Promise(async (resolve, reject) => {
-                const img = await fsAsync.readFile(`images${user.image}`, { encoding: 'base64' });
-                user.image = img
-                resolve();
-            }))
-        });
-    })
-    await Promise.all(promises);
+
     return users
 }
 
