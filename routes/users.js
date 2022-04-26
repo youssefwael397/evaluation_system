@@ -299,7 +299,7 @@ router.post('/forgetpassword', upload.none(), async (req, res) => {
                 from: 'youssefwael397@gmail.com',
                 to: email,
                 subject: 'SPESUSCES Reset Password',
-                text: `To save your privacy we must be secure in sensitive data. Now you can reset password from this link ${link}. Note: This Link is valid for 15 minutes.`
+                html: `<p>To save your privacy we must be secure in sensitive data.</p><h4>Now you can reset password from <a href="${link}">this link</a></h4> <span style="color: #f00">Note:</span> This Link is valid for 15 minutes.`
             }
 
             transporter.sendMail(mailOptions, (err, info) => {
