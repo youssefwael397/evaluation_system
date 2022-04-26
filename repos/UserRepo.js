@@ -397,8 +397,10 @@ const addSecondCommittee = async (user_id, committee_name) => {
 const isEmailExists = async (email) => {
     const user = await User.findOne({ where: { email: email } })
     if (user) {
+        console.log(user)
         return user
     } else {
+        console.log("user is not exist")
         return false
     }
 }

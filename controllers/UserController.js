@@ -163,6 +163,7 @@ const createResetPasswordLink = async (email) => {
     const user = await UserRepo.isEmailExists(email);
     if (!user) {
         return false
+        console.log("user is not exist")
     } else {
         const secret = haram_encrypt + user.password
         const payload = {

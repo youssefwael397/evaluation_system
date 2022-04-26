@@ -281,6 +281,7 @@ router.post('/forgetpassword', upload.none(), async (req, res) => {
             })
         } else {
 
+            console.log(link)
             let transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
@@ -313,7 +314,7 @@ router.post('/forgetpassword', upload.none(), async (req, res) => {
     } catch (error) {
         res.status(403).send({
             status: "error",
-            error
+            error: error
         })
     }
 
