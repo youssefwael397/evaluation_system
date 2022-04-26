@@ -183,14 +183,19 @@ const resetPassword = async (id, token, password) => {
         return false
         console.log("user is not exist")
     } else {
+        console.log("user is exists by id")
+        console.log(user)
         const secret = haram_encrypt + user.password
         const isValid = jwt.verify(token, secret)
         if (!isValid) {
             return false
         } else {
+            console.log("validate jwt")
             const newPassword = await bcrypt.hash(password, 10);
             const updated_user = await UserRepo.updatePassword(user.user_id, newPassword)
             if (updated_user) {
+                console.log("updated user")
+                console.log(updated_user)
                 return true
             } else {
                 return false

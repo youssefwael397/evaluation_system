@@ -331,6 +331,9 @@ router.post('/resetpassword/:id/:token', upload.none(), async (req, res) => {
     const { id, token } = req.params;
     const { password } = req.body;
 
+    console.log(id)
+    console.log(token)
+    console.log(password)
     try {
         const updated_user = await UserController.resetPassword(id, token, password);
         if (!updated_user) {
