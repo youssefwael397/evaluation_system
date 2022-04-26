@@ -289,8 +289,8 @@ router.post('/forgetpassword', upload.none(), async (req, res) => {
                 secure: false, // secure:true for port 465, secure:false for port 587
                 // service: 'Gmail',
                 auth: {
-                    user: 'youssefwael397@gmail.com',
-                    pass: '1022372001yn'
+                    user: 'hrmcommittee.spesusc.2022@gmail.com',
+                    pass: 'SPE.HRM.2022'
                 }
             })
             console.log('transporter is created')
