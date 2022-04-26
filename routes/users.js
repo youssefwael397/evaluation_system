@@ -1,11 +1,11 @@
 const express = require('express');
+const nodemailer = require('nodemailer');
 const router = express.Router();
 const { UserController } = require('../controllers/UserController')
 const multer = require('multer')
 const { storage, uploadBytes, uploadString } = require("../firebase")
 const { getDownloadURL, ref } = require("firebase/storage");
 const { v4: uuid4 } = require('uuid');
-
 const upload = multer({ storage: multer.memoryStorage() })
 const haram_encrypt = require('../env')
 const jwt = require('jsonwebtoken');
