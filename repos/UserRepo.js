@@ -394,6 +394,15 @@ const addSecondCommittee = async (user_id, committee_name) => {
     }
 }
 
+const isEmailExists = async (email) => {
+    const user = await User.findOne({ where: { email: email } })
+    if (user) {
+        return user
+    } else {
+        return false
+    }
+}
+
 const UserRepo = {
     getAllUsers,
     getActiveUsersByCommitteeId,
@@ -410,7 +419,8 @@ const UserRepo = {
     getUserById,
     EditUserById,
     addSecondCommittee,
-    login
+    login,
+    isEmailExists
 }
 
 

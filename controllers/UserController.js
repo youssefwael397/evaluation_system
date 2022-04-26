@@ -1,10 +1,8 @@
 const { UserRepo } = require('../repos/UserRepo')
 const bcrypt = require('bcryptjs')
-const haram_encrypt = require('../env');
+const haram_encrypt = require('../env')
 const fsAsync = require('fs').promises;
-
-
-
+const jwt = require('jsonwebtoken');
 
 
 
@@ -161,6 +159,23 @@ const addSecondCommittee = async ({ user_id, committee }) => {
     return edited_user
 }
 
+const createResetPasswordLink = async (email) => {
+    const user = await UserRepo.isEmailExists(email);
+    if (!user) {
+        return false
+    } else {
+        const secret = haram_encrypt + user.password
+        const payload = {
+            email: user.email,
+            id: user.user_id
+        }
+        const token = jwt.sign(payload, secret, { expiresIn: '15m' })
+        const link = `https://youssefwael397.github.io/spe-evaluation-system/resetpassword/${user.id}/${token}`
+        console.log(link)
+        return link
+    }
+}
+
 
 const UserController = {
     getAllUsers,
@@ -178,7 +193,8 @@ const UserController = {
     DisActivateUser,
     EditUserById,
     addSecondCommittee,
-    login
+    login,
+    createResetPasswordLink
 }
 
 module.exports = { UserController }

@@ -269,4 +269,55 @@ router.put('/disactivate', async (req, res) => {
 })
 
 
+router.post('/forgetpassword', upload.none(), async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const link = await UserController.createResetPasswordLink(email);
+        if (!link) {
+            res.status(403).send({
+                status: "error",
+                error: "Email is not exists"
+            })
+        } else {
+
+            let transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: 'youssefwael397@gmail.com',
+                    pass: '1022372001yn'
+                }
+            })
+
+            let mailOptions = {
+                from: 'youssefwael397@gmail.com',
+                to: email,
+                subject: 'SPESUSCES Reset Password',
+                text: `To save your privacy we must be secure in sensitive data. Now you can reset password from this link ${link}. Note: This Link is valid for 15 minutes.`
+            }
+
+            transporter.sendMail(mailOptions, (err, info) => {
+                if (err) {
+                    console.log(err)
+                } else {
+                    console.log(`Email sent: ${info.response}`)
+                }
+            })
+
+            res.send({
+                status: 'ok',
+                msg: 'Password reset link has been sent. Check your email.'
+            })
+        }
+
+    } catch (error) {
+        res.status(403).send({
+            status: "error",
+            error
+        })
+    }
+
+})
+
+
 module.exports = router
