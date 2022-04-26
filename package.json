@@ -16,6 +16,7 @@
     "mysql": "github:mysqljs/mysql",
     "mysql2": "^2.3.3",
     "nodemailer": "^6.7.3",
+    "nodemailer-smtp-transport": "^2.7.4",
     "nodemon": "^2.0.15",
     "sequelize": "^6.17.0",
     "sequelize-cli": "^6.4.1",

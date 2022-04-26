@@ -1,5 +1,6 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
+let smtpTransport = require('nodemailer-smtp-transport');
 const router = express.Router();
 const { UserController } = require('../controllers/UserController')
 const multer = require('multer')
@@ -282,8 +283,8 @@ router.post('/forgetpassword', upload.none(), async (req, res) => {
         } else {
 
             console.log(link)
-            let transporter = nodemailer.createTransport({
-                service: 'gmail',
+            let transporter = nodemailer.createTransport(smtpTransport, {
+                service: 'Gmail',
                 auth: {
                     user: 'youssefwael397@gmail.com',
                     pass: '1022372001yn'
