@@ -444,7 +444,8 @@ const UserRepo = {
     addSecondCommittee,
     login,
     isEmailExists,
-    isUserExists
+    isUserExists,
+    updatePassword
 }
 
 

@@ -283,33 +283,33 @@ router.post('/forgetpassword', upload.none(), async (req, res) => {
             })
         } else {
             console.log('link is exists in users route')
-            let transporter = nodemailer.createTransport({
-                host: 'smtp.gmail.com',
-                port: 587,
-                secure: false, // secure:true for port 465, secure:false for port 587
-                // service: 'Gmail',
-                auth: {
-                    user: 'hrmcommittee.spesusc.2022@gmail.com',
-                    pass: 'SPE.HRM.2022'
-                }
-            })
-            console.log('transporter is created')
+            // let transporter = nodemailer.createTransport({
+            //     host: 'smtp.gmail.com',
+            //     port: 587,
+            //     secure: false, // secure:true for port 465, secure:false for port 587
+            //     // service: 'Gmail',
+            //     auth: {
+            //         user: 'hrmcommittee.spesusc.2022@gmail.com',
+            //         pass: 'SPE.HRM.2022'
+            //     }
+            // })
+            // console.log('transporter is created')
 
-            let mailOptions = {
-                from: 'youssefwael397@gmail.com',
-                to: email,
-                subject: 'SPESUSCES Reset Password',
-                text: `To save your privacy we must be secure in sensitive data. Now you can reset password from this link ${link}. Note: This Link is valid for 15 minutes.`
-            }
+            // let mailOptions = {
+            //     from: 'youssefwael397@gmail.com',
+            //     to: email,
+            //     subject: 'SPESUSCES Reset Password',
+            //     text: `To save your privacy we must be secure in sensitive data. Now you can reset password from this link ${link}. Note: This Link is valid for 15 minutes.`
+            // }
 
-            transporter.sendMail(mailOptions, (err, info) => {
-                if (err) {
-                    console.log(err)
-                } else {
-                    console.log(`Email sent: ${info.response}`)
-                }
-            })
-            console.log('email is sent')
+            // transporter.sendMail(mailOptions, (err, info) => {
+            //     if (err) {
+            //         console.log(err)
+            //     } else {
+            //         console.log(`Email sent: ${info.response}`)
+            //     }
+            // })
+            // console.log('email is sent')
 
             res.send({
                 status: 'ok',
