@@ -171,7 +171,7 @@ const createResetPasswordLink = async (email) => {
             id: user.user_id
         }
         const token = jwt.sign(payload, secret, { expiresIn: '15m' })
-        const link = `https://youssefwael397.github.io/spe-evaluation-system/resetpassword/${user.id}/${token}`
+        const link = `https://youssefwael397.github.io/spe-evaluation-system/resetpassword/${user.user_id}/${token}`
         console.log(link)
         return link
     }

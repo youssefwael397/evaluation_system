@@ -282,7 +282,7 @@ router.post('/forgetpassword', upload.none(), async (req, res) => {
             })
         } else {
 
-            console.log(link)
+            console.log('link is exists in users route')
             let transporter = nodemailer.createTransport(smtpTransport, {
                 service: 'Gmail',
                 auth: {
