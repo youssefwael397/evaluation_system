@@ -275,13 +275,13 @@ router.post('/forgetpassword', upload.none(), async (req, res) => {
 
     try {
         const link = await UserController.createResetPasswordLink(email);
+        console.log("try link")
         if (!link) {
             res.status(403).send({
                 status: "error",
                 error: "Email is not exists"
             })
         } else {
-
             console.log('link is exists in users route')
             let transporter = nodemailer.createTransport(smtpTransport, {
                 service: 'Gmail',
@@ -290,6 +290,7 @@ router.post('/forgetpassword', upload.none(), async (req, res) => {
                     pass: '1022372001yn'
                 }
             })
+            console.log('transporter is created')
 
             let mailOptions = {
                 from: 'youssefwael397@gmail.com',
@@ -305,6 +306,7 @@ router.post('/forgetpassword', upload.none(), async (req, res) => {
                     console.log(`Email sent: ${info.response}`)
                 }
             })
+            console.log('email is sent')
 
             res.send({
                 status: 'ok',
