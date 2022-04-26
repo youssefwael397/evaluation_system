@@ -327,4 +327,32 @@ router.post('/forgetpassword', upload.none(), async (req, res) => {
 })
 
 
+router.post('/resetpassword/:id/:token', upload.none(), async (req, res) => {
+    const { id, token } = req.params;
+    const { password } = req.body;
+
+    try {
+        const updated_user = await UserController.resetPassword(id, token, password);
+        if (!updated_user) {
+            res.status(403).send({
+                status: "error",
+                error: "Failed to update password"
+            })
+        } else {
+            res.send({
+                status: 'ok',
+                msg: 'Password has been reset successfully.'
+            })
+        }
+
+    } catch (error) {
+        res.status(403).send({
+            status: "error",
+            error: "Failed to update password"
+        })
+    }
+
+})
+
+
 module.exports = router

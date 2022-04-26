@@ -177,6 +177,28 @@ const createResetPasswordLink = async (email) => {
     }
 }
 
+const resetPassword = async (id, token, password) => {
+    const user = await UserRepo.isUserExists(id);
+    if (!user) {
+        return false
+        console.log("user is not exist")
+    } else {
+        const secret = haram_encrypt + user.password
+        const isValid = jwt.verify(token, secret)
+        if (!isValid) {
+            return false
+        } else {
+            const newPassword = await bcrypt.hash(password, 10);
+            const updated_user = await UserRepo.updatePassword(user.user_id, newPassword)
+            if (updated_user) {
+                return true
+            } else {
+                return false
+            }
+        }
+    }
+}
+
 
 const UserController = {
     getAllUsers,
@@ -195,7 +217,8 @@ const UserController = {
     EditUserById,
     addSecondCommittee,
     login,
-    createResetPasswordLink
+    createResetPasswordLink,
+    resetPassword
 }
 
 module.exports = { UserController }

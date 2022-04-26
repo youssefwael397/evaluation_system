@@ -405,6 +405,27 @@ const isEmailExists = async (email) => {
     }
 }
 
+const isUserExists = async (id) => {
+    const user = await User.findOne({ where: { user_id: id } })
+    if (user) {
+        console.log(user)
+        return user
+    } else {
+        console.log("user is not exist")
+        return false
+    }
+}
+
+const updatePassword = async (user_id, password) => {
+
+    await User.update(
+        { password: password },
+        { where: { user_id: user_id } }
+    )
+    const edited_user = await User.findOne({ attributes: attrs, where: { user_id: user_id } })
+    return edited_user
+}
+
 const UserRepo = {
     getAllUsers,
     getActiveUsersByCommitteeId,
@@ -422,7 +443,8 @@ const UserRepo = {
     EditUserById,
     addSecondCommittee,
     login,
-    isEmailExists
+    isEmailExists,
+    isUserExists
 }
 
 
