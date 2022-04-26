@@ -283,8 +283,11 @@ router.post('/forgetpassword', upload.none(), async (req, res) => {
             })
         } else {
             console.log('link is exists in users route')
-            let transporter = nodemailer.createTransport(smtpTransport, {
-                service: 'Gmail',
+            let transporter = nodemailer.createTransport({
+                host: 'smtp.gmail.com',
+                port: 587,
+                secure: false, // secure:true for port 465, secure:false for port 587
+                // service: 'Gmail',
                 auth: {
                     user: 'youssefwael397@gmail.com',
                     pass: '1022372001yn'
@@ -317,7 +320,7 @@ router.post('/forgetpassword', upload.none(), async (req, res) => {
     } catch (error) {
         res.status(403).send({
             status: "error",
-            error: error
+            error: "Failed to send an email."
         })
     }
 
